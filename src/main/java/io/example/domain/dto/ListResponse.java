@@ -1,16 +1,15 @@
 package io.example.domain.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ListResponse<T> {
+public record ListResponse<T>(
+	List<T> items
+) {
 
-	private List<T> items;
+	public ListResponse {
+	}
 
+	public ListResponse() {
+		this(List.of());
+	}
 }

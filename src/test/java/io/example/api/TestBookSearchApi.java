@@ -53,8 +53,8 @@ public class TestBookSearchApi {
 		AuthorView author2 = authorTestDataFactory.createAuthor("Book Search B Author");
 		AuthorView author3 = authorTestDataFactory.createAuthor("Book Search C Author");
 
-		List<String> authorIds1 = List.of(author1.getId(), author2.getId());
-		List<String> authorIds2 = List.of(author3.getId());
+		List<String> authorIds1 = List.of(author1.id(), author2.id());
+		List<String> authorIds2 = List.of(author3.id());
 
 		BookView book1 = bookTestDataFactory.createBook(authorIds1, "Book Search A Book", null, null,
 				List.of("Book Search Genre A", "Book Search Genre B"));
@@ -72,30 +72,30 @@ public class TestBookSearchApi {
 		BookView book9 = bookTestDataFactory.createBook(authorIds2, "Book Search I Book");
 		BookView book10 = bookTestDataFactory.createBook(authorIds2, "Book Search J Book");
 
-		testIdFilter(book1.getId());
+		testIdFilter(book1.id());
 		testTitleFilter();
 		testGenresFilter();
 		testIsbn13Filter();
 		testIsbn10Filter();
 		testPublisherFilter();
 		testPublishDateFilter();
-		testAuthorIdFilter(author1.getId());
+		testAuthorIdFilter(author1.id());
 		testAuthorFullNameFilter();
 
-		bookTestDataFactory.deleteBook(book1.getId());
-		bookTestDataFactory.deleteBook(book2.getId());
-		bookTestDataFactory.deleteBook(book3.getId());
-		bookTestDataFactory.deleteBook(book4.getId());
-		bookTestDataFactory.deleteBook(book5.getId());
-		bookTestDataFactory.deleteBook(book6.getId());
-		bookTestDataFactory.deleteBook(book7.getId());
-		bookTestDataFactory.deleteBook(book8.getId());
-		bookTestDataFactory.deleteBook(book9.getId());
-		bookTestDataFactory.deleteBook(book10.getId());
+		bookTestDataFactory.deleteBook(book1.id());
+		bookTestDataFactory.deleteBook(book2.id());
+		bookTestDataFactory.deleteBook(book3.id());
+		bookTestDataFactory.deleteBook(book4.id());
+		bookTestDataFactory.deleteBook(book5.id());
+		bookTestDataFactory.deleteBook(book6.id());
+		bookTestDataFactory.deleteBook(book7.id());
+		bookTestDataFactory.deleteBook(book8.id());
+		bookTestDataFactory.deleteBook(book9.id());
+		bookTestDataFactory.deleteBook(book10.id());
 
-		authorTestDataFactory.deleteAuthor(author1.getId());
-		authorTestDataFactory.deleteAuthor(author2.getId());
-		authorTestDataFactory.deleteAuthor(author3.getId());
+		authorTestDataFactory.deleteAuthor(author1.id());
+		authorTestDataFactory.deleteAuthor(author2.id());
+		authorTestDataFactory.deleteAuthor(author3.id());
 	}
 
 	private void testIdFilter(String id) throws Exception {
@@ -103,10 +103,9 @@ public class TestBookSearchApi {
 		ListResponse<BookView> bookViewList;
 
 		// Search query with book id equal
-		query = new SearchBooksQuery();
-		query.setId(id);
+		query = SearchBooksQuery.builder().id(id).build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, bookViewList.items().size(), "Invalid search result!");
 	}
 
 	private void testTitleFilter() throws Exception {
@@ -114,16 +113,14 @@ public class TestBookSearchApi {
 		ListResponse<BookView> bookViewList;
 
 		// Search query book title contains
-		query = new SearchBooksQuery();
-		query.setTitle("Book Search G");
+		query = SearchBooksQuery.builder().title("Book Search G").build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, bookViewList.items().size(), "Invalid search result!");
 
 		// Search query book title contains case insensitive
-		query = new SearchBooksQuery();
-		query.setTitle("Book Search g");
+		query = SearchBooksQuery.builder().title("Book Search g").build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, bookViewList.items().size(), "Invalid search result!");
 	}
 
 	private void testGenresFilter() throws Exception {
@@ -131,22 +128,19 @@ public class TestBookSearchApi {
 		ListResponse<BookView> bookViewList;
 
 		// Search query genres all
-		query = new SearchBooksQuery();
-		query.setGenres(Set.of("Book Search Genre A", "Book Search Genre B"));
+		query = SearchBooksQuery.builder().genres(Set.of("Book Search Genre A", "Book Search Genre B")).build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, bookViewList.items().size(), "Invalid search result!");
 
 		// Search query genres mismatch
-		query = new SearchBooksQuery();
-		query.setGenres(Set.of("Book Search Genre A", "Book Search Genre C"));
+		query = SearchBooksQuery.builder().genres(Set.of("Book Search Genre A", "Book Search Genre C")).build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(0, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(0, bookViewList.items().size(), "Invalid search result!");
 
 		// Search query genres partial
-		query = new SearchBooksQuery();
-		query.setGenres(Set.of("Book Search Genre A"));
+		query = SearchBooksQuery.builder().genres(Set.of("Book Search Genre A")).build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, bookViewList.items().size(), "Invalid search result!");
 	}
 
 	private void testIsbn13Filter() throws Exception {
@@ -154,10 +148,9 @@ public class TestBookSearchApi {
 		ListResponse<BookView> bookViewList;
 
 		// Search query isbn13 equals
-		query = new SearchBooksQuery();
-		query.setIsbn13("978-1-56619-909-4");
+		query = SearchBooksQuery.builder().isbn13("978-1-56619-909-4").build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, bookViewList.items().size(), "Invalid search result!");
 	}
 
 	private void testIsbn10Filter() throws Exception {
@@ -165,10 +158,9 @@ public class TestBookSearchApi {
 		ListResponse<BookView> bookViewList;
 
 		// Search query isbn10 equals
-		query = new SearchBooksQuery();
-		query.setIsbn10("1-56619-909-3");
+		query = SearchBooksQuery.builder().isbn10("1-56619-909-3").build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, bookViewList.items().size(), "Invalid search result!");
 	}
 
 	private void testPublisherFilter() throws Exception {
@@ -176,16 +168,14 @@ public class TestBookSearchApi {
 		ListResponse<BookView> bookViewList;
 
 		// Search query book publisher contains
-		query = new SearchBooksQuery();
-		query.setPublisher("Book Search A Pub");
+		query = SearchBooksQuery.builder().publisher("Book Search A Pub").build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, bookViewList.items().size(), "Invalid search result!");
 
 		// Search query book publisher contains case insensitive
-		query = new SearchBooksQuery();
-		query.setPublisher("Book Search a");
+		query = SearchBooksQuery.builder().publisher("Book Search a").build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, bookViewList.items().size(), "Invalid search result!");
 	}
 
 	private void testPublishDateFilter() throws Exception {
@@ -193,32 +183,24 @@ public class TestBookSearchApi {
 		ListResponse<BookView> bookViewList;
 
 		// Search query publish date interval contains
-		query = new SearchBooksQuery();
-		query.setPublishDateStart(LocalDate.of(1985, 5, 1));
-		query.setPublishDateEnd(LocalDate.of(1985, 9, 1));
+		query = SearchBooksQuery.builder().publishDateStart(LocalDate.of(1985, 5, 1)).publishDateEnd(LocalDate.of(1985, 9, 1)).build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, bookViewList.items().size(), "Invalid search result!");
 
 		// Search query publish date interval not contains
-		query = new SearchBooksQuery();
-		query.setPublishDateStart(LocalDate.of(1985, 8, 1));
-		query.setPublishDateEnd(LocalDate.of(1985, 9, 1));
+		query = SearchBooksQuery.builder().publishDateStart(LocalDate.of(1985, 8, 1)).publishDateEnd(LocalDate.of(1985, 9, 1)).build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(0, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(0, bookViewList.items().size(), "Invalid search result!");
 
 		// Search query publish date interval start is inclusive
-		query = new SearchBooksQuery();
-		query.setPublishDateStart(LocalDate.of(1985, 7, 17));
-		query.setPublishDateEnd(LocalDate.of(1985, 9, 1));
+		query = SearchBooksQuery.builder().publishDateStart(LocalDate.of(1985, 7, 17)).publishDateEnd(LocalDate.of(1985, 9, 1)).build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, bookViewList.items().size(), "Invalid search result!");
 
 		// Search query publish date interval end is exclusive
-		query = new SearchBooksQuery();
-		query.setPublishDateStart(LocalDate.of(1985, 5, 1));
-		query.setPublishDateEnd(LocalDate.of(1985, 7, 17));
+		query = SearchBooksQuery.builder().publishDateStart(LocalDate.of(1985, 5, 1)).publishDateEnd(LocalDate.of(1985, 7, 17)).build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(0, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(0, bookViewList.items().size(), "Invalid search result!");
 	}
 
 	private void testAuthorIdFilter(String authorId) throws Exception {
@@ -226,10 +208,9 @@ public class TestBookSearchApi {
 		ListResponse<BookView> bookViewList;
 
 		// Search query with book id equal
-		query = new SearchBooksQuery();
-		query.setAuthorId(authorId);
+		query = SearchBooksQuery.builder().authorId(authorId).build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(5, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(5, bookViewList.items().size(), "Invalid search result!");
 	}
 
 	private void testAuthorFullNameFilter() throws Exception {
@@ -237,16 +218,14 @@ public class TestBookSearchApi {
 		ListResponse<BookView> bookViewList;
 
 		// Search query author full name contains
-		query = new SearchBooksQuery();
-		query.setAuthorFullName("Book Search A");
+		query = SearchBooksQuery.builder().authorFullName("Book Search A").build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(5, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(5, bookViewList.items().size(), "Invalid search result!");
 
 		// Search query author full name contains case insensitive
-		query = new SearchBooksQuery();
-		query.setAuthorFullName("Book Search c");
+		query = SearchBooksQuery.builder().authorFullName("Book Search c").build();
 		bookViewList = execute("/api/book/search", query);
-		assertEquals(5, bookViewList.getItems().size(), "Invalid search result!");
+		assertEquals(5, bookViewList.items().size(), "Invalid search result!");
 	}
 
 	private ListResponse<BookView> execute(String url, SearchBooksQuery query) throws Exception {

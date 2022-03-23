@@ -22,16 +22,14 @@ public class AuthorTestDataFactory {
 			String about,
 			String nationality,
 			List<String> genres) {
-		EditAuthorRequest createRequest = new EditAuthorRequest();
-		createRequest.setFullName(fullName);
-		createRequest.setAbout(about);
-		createRequest.setNationality(nationality);
-		createRequest.setGenres(genres);
+		EditAuthorRequest createRequest = new EditAuthorRequest(
+			fullName, about, nationality, genres
+		);
 
 		AuthorView authorView = authorService.create(createRequest);
 
-		assertNotNull(authorView.getId(), "Author id must not be null!");
-		assertEquals(fullName, authorView.getFullName(), "Author name update isn't applied!");
+		assertNotNull(authorView.id(), "Author id must not be null!");
+		assertEquals(fullName, authorView.fullName(), "Author name update isn't applied!");
 
 		return authorView;
 	}

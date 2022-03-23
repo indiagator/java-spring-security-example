@@ -79,14 +79,14 @@ class UserRepoCustomImpl implements UserRepoCustom {
 		List<AggregationOperation> operations = new ArrayList<>();
 
 		List<Criteria> criteriaList = new ArrayList<>();
-		if (StringUtils.hasText(query.getId())) {
-			criteriaList.add(Criteria.where("id").is(new ObjectId(query.getId())));
+		if (StringUtils.hasText(query.id())) {
+			criteriaList.add(Criteria.where("id").is(new ObjectId(query.id())));
 		}
-		if (StringUtils.hasText(query.getUsername())) {
-			criteriaList.add(Criteria.where("username").regex(query.getUsername(), "i"));
+		if (StringUtils.hasText(query.username())) {
+			criteriaList.add(Criteria.where("username").regex(query.username(), "i"));
 		}
-		if (StringUtils.hasText(query.getFullName())) {
-			criteriaList.add(Criteria.where("fullName").regex(query.getFullName(), "i"));
+		if (StringUtils.hasText(query.fullName())) {
+			criteriaList.add(Criteria.where("fullName").regex(query.fullName(), "i"));
 		}
 		if (!criteriaList.isEmpty()) {
 			Criteria userCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
@@ -94,8 +94,8 @@ class UserRepoCustomImpl implements UserRepoCustom {
 		}
 
 		operations.add(sort(Sort.Direction.DESC, "createdAt"));
-		operations.add(skip((page.getNumber() - 1) * page.getLimit()));
-		operations.add(limit(page.getLimit()));
+		operations.add(skip((page.number() - 1) * page.limit()));
+		operations.add(limit(page.limit()));
 
 		TypedAggregation<User> aggregation = newAggregation(User.class, operations);
 		AggregationResults<User> results = mongoTemplate.aggregate(aggregation, User.class);

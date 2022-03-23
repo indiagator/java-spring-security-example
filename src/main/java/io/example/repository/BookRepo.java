@@ -55,38 +55,38 @@ class BookRepoCustomImpl implements BookRepoCustom {
 		List<AggregationOperation> operations = new ArrayList<>();
 
 		List<Criteria> criteriaList = new ArrayList<>();
-		if (StringUtils.hasText(query.getId())) {
-			criteriaList.add(Criteria.where("id").is(new ObjectId(query.getId())));
+		if (StringUtils.hasText(query.id())) {
+			criteriaList.add(Criteria.where("id").is(new ObjectId(query.id())));
 		}
-		if (StringUtils.hasText(query.getCreatorId())) {
-			criteriaList.add(Criteria.where("creatorId").is(new ObjectId(query.getCreatorId())));
+		if (StringUtils.hasText(query.creatorId())) {
+			criteriaList.add(Criteria.where("creatorId").is(new ObjectId(query.creatorId())));
 		}
-		if (query.getCreatedAtStart() != null) {
-			criteriaList.add(Criteria.where("createdAt").gte(query.getCreatedAtStart()));
+		if (query.createdAtStart() != null) {
+			criteriaList.add(Criteria.where("createdAt").gte(query.createdAtStart()));
 		}
-		if (query.getCreatedAtEnd() != null) {
-			criteriaList.add(Criteria.where("createdAt").lt(query.getCreatedAtEnd()));
+		if (query.createdAtEnd() != null) {
+			criteriaList.add(Criteria.where("createdAt").lt(query.createdAtEnd()));
 		}
-		if (StringUtils.hasText(query.getTitle())) {
-			criteriaList.add(Criteria.where("title").regex(query.getTitle(), "i"));
+		if (StringUtils.hasText(query.title())) {
+			criteriaList.add(Criteria.where("title").regex(query.title(), "i"));
 		}
-		if (!CollectionUtils.isEmpty(query.getGenres())) {
-			criteriaList.add(Criteria.where("genres").all(query.getGenres()));
+		if (!CollectionUtils.isEmpty(query.genres())) {
+			criteriaList.add(Criteria.where("genres").all(query.genres()));
 		}
-		if (StringUtils.hasText(query.getIsbn13())) {
-			criteriaList.add(Criteria.where("isbn13").is(query.getIsbn13()));
+		if (StringUtils.hasText(query.isbn13())) {
+			criteriaList.add(Criteria.where("isbn13").is(query.isbn13()));
 		}
-		if (StringUtils.hasText(query.getIsbn10())) {
-			criteriaList.add(Criteria.where("isbn10").is(query.getIsbn10()));
+		if (StringUtils.hasText(query.isbn10())) {
+			criteriaList.add(Criteria.where("isbn10").is(query.isbn10()));
 		}
-		if (StringUtils.hasText(query.getPublisher())) {
-			criteriaList.add(Criteria.where("publisher").regex(query.getPublisher(), "i"));
+		if (StringUtils.hasText(query.publisher())) {
+			criteriaList.add(Criteria.where("publisher").regex(query.publisher(), "i"));
 		}
-		if (query.getPublishDateStart() != null) {
-			criteriaList.add(Criteria.where("publishDate").gte(query.getPublishDateStart()));
+		if (query.publishDateStart() != null) {
+			criteriaList.add(Criteria.where("publishDate").gte(query.publishDateStart()));
 		}
-		if (query.getPublishDateEnd() != null) {
-			criteriaList.add(Criteria.where("publishDate").lt(query.getPublishDateEnd()));
+		if (query.publishDateEnd() != null) {
+			criteriaList.add(Criteria.where("publishDate").lt(query.publishDateEnd()));
 		}
 		if (!criteriaList.isEmpty()) {
 			Criteria bookCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
@@ -94,11 +94,11 @@ class BookRepoCustomImpl implements BookRepoCustom {
 		}
 
 		criteriaList = new ArrayList<>();
-		if (StringUtils.hasText(query.getAuthorId())) {
-			criteriaList.add(Criteria.where("author._id").is(new ObjectId(query.getAuthorId())));
+		if (StringUtils.hasText(query.authorId())) {
+			criteriaList.add(Criteria.where("author._id").is(new ObjectId(query.authorId())));
 		}
-		if (StringUtils.hasText(query.getAuthorFullName())) {
-			criteriaList.add(Criteria.where("author.fullName").regex(query.getAuthorFullName(), "i"));
+		if (StringUtils.hasText(query.authorFullName())) {
+			criteriaList.add(Criteria.where("author.fullName").regex(query.authorFullName(), "i"));
 		}
 		if (!criteriaList.isEmpty()) {
 			Criteria authorCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
@@ -108,8 +108,8 @@ class BookRepoCustomImpl implements BookRepoCustom {
 		}
 
 		operations.add(sort(Sort.Direction.DESC, "createdAt"));
-		operations.add(skip((page.getNumber() - 1) * page.getLimit()));
-		operations.add(limit(page.getLimit()));
+		operations.add(skip((page.number() - 1) * page.limit()));
+		operations.add(limit(page.limit()));
 
 		TypedAggregation<Book> aggregation = newAggregation(Book.class, operations);
 		System.out.println(aggregation.toString());

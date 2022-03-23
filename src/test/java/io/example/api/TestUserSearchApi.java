@@ -52,15 +52,15 @@ public class TestUserSearchApi {
 		UserView user5 = userTestDataFactory.createUser(String.format("evelin.bradley.%d@outlook.com", currentTimeMillis()),
 				"Evelyn Bradley");
 
-		testIdFilter(user1.getId());
+		testIdFilter(user1.id());
 		testUsernameFilter();
 		testFullNameFilter();
 
-		userTestDataFactory.deleteUser(user1.getId());
-		userTestDataFactory.deleteUser(user2.getId());
-		userTestDataFactory.deleteUser(user3.getId());
-		userTestDataFactory.deleteUser(user4.getId());
-		userTestDataFactory.deleteUser(user5.getId());
+		userTestDataFactory.deleteUser(user1.id());
+		userTestDataFactory.deleteUser(user2.id());
+		userTestDataFactory.deleteUser(user3.id());
+		userTestDataFactory.deleteUser(user4.id());
+		userTestDataFactory.deleteUser(user5.id());
 	}
 
 	private void testIdFilter(String id) throws Exception {
@@ -68,10 +68,9 @@ public class TestUserSearchApi {
 		ListResponse<UserView> userViewList;
 
 		// Search query with book id equal
-		query = new SearchUsersQuery();
-		query.setId(id);
+		query = SearchUsersQuery.builder().id(id).build();
 		userViewList = execute("/api/admin/user/search", query);
-		assertEquals(1, userViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, userViewList.items().size(), "Invalid search result!");
 	}
 
 	private void testUsernameFilter() throws Exception {
@@ -79,22 +78,19 @@ public class TestUserSearchApi {
 		ListResponse<UserView> userViewList;
 
 		// Search query username starts with
-		query = new SearchUsersQuery();
-		query.setUsername("evelin");
+		query = SearchUsersQuery.builder().username("evelin").build();
 		userViewList = execute("/api/admin/user/search", query);
-		assertEquals(2, userViewList.getItems().size(), "Invalid search result!");
+		assertEquals(2, userViewList.items().size(), "Invalid search result!");
 
 		// Search query username contains
-		query = new SearchUsersQuery();
-		query.setUsername("gmail");
+		query = SearchUsersQuery.builder().username("gmail").build();
 		userViewList = execute("/api/admin/user/search", query);
-		assertEquals(2, userViewList.getItems().size(), "Invalid search result!");
+		assertEquals(2, userViewList.items().size(), "Invalid search result!");
 
 		// Search query username case insensitive
-		query = new SearchUsersQuery();
-		query.setUsername("William");
+		query = SearchUsersQuery.builder().username("William").build();
 		userViewList = execute("/api/admin/user/search", query);
-		assertEquals(1, userViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, userViewList.items().size(), "Invalid search result!");
 	}
 
 	private void testFullNameFilter() throws Exception {
@@ -102,22 +98,19 @@ public class TestUserSearchApi {
 		ListResponse<UserView> userViewList;
 
 		// Search query full name starts with
-		query = new SearchUsersQuery();
-		query.setUsername("William");
+		query = SearchUsersQuery.builder().username("William").build();
 		userViewList = execute("/api/admin/user/search", query);
-		assertEquals(1, userViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, userViewList.items().size(), "Invalid search result!");
 
 		// Search query full name contains
-		query = new SearchUsersQuery();
-		query.setUsername("David");
+		query = SearchUsersQuery.builder().username("David").build();
 		userViewList = execute("/api/admin/user/search", query);
-		assertEquals(1, userViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, userViewList.items().size(), "Invalid search result!");
 
 		// Search query full name case insensitive
-		query = new SearchUsersQuery();
-		query.setUsername("CLARKE");
+		query = SearchUsersQuery.builder().username("CLARKE").build();
 		userViewList = execute("/api/admin/user/search", query);
-		assertEquals(1, userViewList.getItems().size(), "Invalid search result!");
+		assertEquals(1, userViewList.items().size(), "Invalid search result!");
 	}
 
 	private ListResponse<UserView> execute(String url, SearchUsersQuery query) throws Exception {

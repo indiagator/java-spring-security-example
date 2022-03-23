@@ -19,16 +19,14 @@ public class UserTestDataFactory {
 	public UserView createUser(String username,
 			String fullName,
 			String password) {
-		CreateUserRequest createRequest = new CreateUserRequest();
-		createRequest.setUsername(username);
-		createRequest.setFullName(fullName);
-		createRequest.setPassword(password);
-		createRequest.setRePassword(password);
+		CreateUserRequest createRequest = new CreateUserRequest(
+			username, fullName, password, password
+		);
 
 		UserView userView = userService.create(createRequest);
 
-		assertNotNull(userView.getId(), "User id must not be null!");
-		assertEquals(fullName, userView.getFullName(), "User name update isn't applied!");
+		assertNotNull(userView.id(), "User id must not be null!");
+		assertEquals(fullName, userView.fullName(), "User name update isn't applied!");
 
 		return userView;
 	}

@@ -47,9 +47,7 @@ public class TestAuthApi {
 		UserView userView = userTestDataFactory.createUser(String.format("test.user.%d@nix.io", currentTimeMillis()),
 				"Test User", password);
 
-		AuthRequest request = new AuthRequest();
-		request.setUsername(userView.getUsername());
-		request.setPassword(password);
+		AuthRequest request = new AuthRequest(userView.username(), password);
 
 		MvcResult createResult = this.mockMvc
 				.perform(post("/api/public/login")
@@ -60,7 +58,7 @@ public class TestAuthApi {
 				.andReturn();
 
 		UserView authUserView = fromJson(objectMapper, createResult.getResponse().getContentAsString(), UserView.class);
-		assertEquals(userView.getId(), authUserView.getId(), "User ids must match!");
+		assertEquals(userView.id(), authUserView.id(), "User ids must match!");
 	}
 
 	@Test
@@ -68,9 +66,7 @@ public class TestAuthApi {
 		UserView userView = userTestDataFactory.createUser(String.format("test.user.%d@nix.io", currentTimeMillis()),
 				"Test User", password);
 
-		AuthRequest request = new AuthRequest();
-		request.setUsername(userView.getUsername());
-		request.setPassword("zxc");
+		AuthRequest request = new AuthRequest(userView.username(), "zxc");
 
 		this.mockMvc
 				.perform(post("/api/public/login")
@@ -83,11 +79,11 @@ public class TestAuthApi {
 
 	@Test
 	public void testRegisterSuccess() throws Exception {
-		CreateUserRequest goodRequest = new CreateUserRequest();
-		goodRequest.setUsername(String.format("test.user.%d@nix.com", currentTimeMillis()));
-		goodRequest.setFullName("Test User A");
-		goodRequest.setPassword(password);
-		goodRequest.setRePassword(password);
+		CreateUserRequest goodRequest = new CreateUserRequest(
+			String.format("test.user.%d@nix.com", currentTimeMillis()),
+			"Test User A",
+			password
+		);
 
 		MvcResult createResult = this.mockMvc
 				.perform(post("/api/public/register")
@@ -97,14 +93,15 @@ public class TestAuthApi {
 				.andReturn();
 
 		UserView userView = fromJson(objectMapper, createResult.getResponse().getContentAsString(), UserView.class);
-		assertNotNull(userView.getId(), "User id must not be null!");
-		assertEquals(goodRequest.getFullName(), userView.getFullName(), "User fullname  update isn't applied!");
+		assertNotNull(userView.id(), "User id must not be null!");
+		assertEquals(goodRequest.fullName(), userView.fullName(), "User fullname  update isn't applied!");
 	}
 
 	@Test
 	public void testRegisterFail() throws Exception {
-		CreateUserRequest badRequest = new CreateUserRequest();
-		badRequest.setUsername("invalid.username");
+		CreateUserRequest badRequest = new CreateUserRequest(
+			"invalid.username", "", ""
+		);
 
 		this.mockMvc
 				.perform(post("/api/public/register")

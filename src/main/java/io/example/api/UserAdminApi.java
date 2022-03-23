@@ -54,7 +54,7 @@ public class UserAdminApi {
 
 	@PostMapping("search")
 	public ListResponse<UserView> search(@RequestBody SearchRequest<SearchUsersQuery> request) {
-		return new ListResponse<>(userService.searchUsers(request.getPage(), request.getQuery()));
+		return new ListResponse<UserView>(userService.searchUsers(request.page(), request.query()));
 	}
 
 }

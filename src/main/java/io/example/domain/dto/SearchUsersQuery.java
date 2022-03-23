@@ -1,12 +1,17 @@
 package io.example.domain.dto;
 
-import lombok.Data;
+import lombok.Builder;
 
-@Data
-public class SearchUsersQuery {
+public record SearchUsersQuery(
+	String id,
+	String username,
+	String fullName
+) {
 
-	private String id;
-	private String username;
-	private String fullName;
+	@Builder
+  public SearchUsersQuery {}
 
+  public SearchUsersQuery() {
+    this(null, null, null);
+  }
 }

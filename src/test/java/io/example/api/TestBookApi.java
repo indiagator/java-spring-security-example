@@ -57,9 +57,9 @@ public class TestBookApi {
 	public void testCreateSuccess() throws Exception {
 		AuthorView authorView = authorTestDataFactory.createAuthor("Test Author A");
 
-		EditBookRequest goodRequest = new EditBookRequest();
-		goodRequest.setAuthorIds(List.of(authorView.getId()));
-		goodRequest.setTitle("Test Book A");
+		EditBookRequest goodRequest = new EditBookRequest(
+			List.of(authorView.id()), "Test Book A", null, null, null, null, null, null, null, null
+		);
 
 		MvcResult createResult = this.mockMvc
 				.perform(post("/api/book")
@@ -69,8 +69,8 @@ public class TestBookApi {
 				.andReturn();
 
 		BookView bookView = fromJson(objectMapper, createResult.getResponse().getContentAsString(), BookView.class);
-		assertNotNull(bookView.getId(), "Book id must not be null!");
-		assertEquals(goodRequest.getTitle(), bookView.getTitle(), "Book title update isn't applied!");
+		assertNotNull(bookView.id(), "Book id must not be null!");
+		assertEquals(goodRequest.title(), bookView.title(), "Book title update isn't applied!");
 	}
 
 	@Test
@@ -88,33 +88,33 @@ public class TestBookApi {
 	@Test
 	public void testEditSuccess() throws Exception {
 		AuthorView authorView = authorTestDataFactory.createAuthor("Test Author A");
-		BookView bookView = bookTestDataFactory.createBook(List.of(authorView.getId()), "Test Book A");
+		BookView bookView = bookTestDataFactory.createBook(List.of(authorView.id()), "Test Book A");
 
-		EditBookRequest updateRequest = new EditBookRequest();
-		updateRequest.setTitle("Test Book B");
-		updateRequest.setAbout("Cool Book");
+		EditBookRequest updateRequest = new EditBookRequest(
+			null, "Test Book B", "Cool Book", null, null, null, null, null, null, null
+		);
 
 		MvcResult updateResult = this.mockMvc
-				.perform(put(String.format("/api/book/%s", bookView.getId()))
+				.perform(put(String.format("/api/book/%s", bookView.id()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(toJson(objectMapper, updateRequest)))
 				.andExpect(status().isOk())
 				.andReturn();
 		BookView newBookView = fromJson(objectMapper, updateResult.getResponse().getContentAsString(), BookView.class);
 
-		assertEquals(updateRequest.getTitle(), newBookView.getTitle(), "Book title update isn't applied!");
-		assertEquals(updateRequest.getAbout(), newBookView.getAbout(), "Book about update isn't applied!");
+		assertEquals(updateRequest.title(), newBookView.title(), "Book title update isn't applied!");
+		assertEquals(updateRequest.about(), newBookView.about(), "Book about update isn't applied!");
 	}
 
 	@Test
 	public void testEditFailBadRequest() throws Exception {
 		AuthorView authorView = authorTestDataFactory.createAuthor("Test Author A");
-		BookView bookView = bookTestDataFactory.createBook(List.of(authorView.getId()), "Test Book A");
+		BookView bookView = bookTestDataFactory.createBook(List.of(authorView.id()), "Test Book A");
 
 		EditBookRequest updateRequest = new EditBookRequest();
 
 		this.mockMvc
-				.perform(put(String.format("/api/book/%s", bookView.getId()))
+				.perform(put(String.format("/api/book/%s", bookView.id()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(toJson(objectMapper, updateRequest)))
 				.andExpect(status().isBadRequest())
@@ -123,8 +123,9 @@ public class TestBookApi {
 
 	@Test
 	public void testEditFailNotFound() throws Exception {
-		EditBookRequest updateRequest = new EditBookRequest();
-		updateRequest.setTitle("Test Book A");
+		EditBookRequest updateRequest = new EditBookRequest(
+			null, "Test Book B", null, null, null, null, null, null, null, null
+		);
 
 		this.mockMvc
 				.perform(put(String.format("/api/book/%s", "5f07c259ffb98843e36a2aa9"))
@@ -137,14 +138,14 @@ public class TestBookApi {
 	@Test
 	public void testDeleteSuccess() throws Exception {
 		AuthorView authorView = authorTestDataFactory.createAuthor("Test Author A");
-		BookView bookView = bookTestDataFactory.createBook(List.of(authorView.getId()), "Test Book A");
+		BookView bookView = bookTestDataFactory.createBook(List.of(authorView.id()), "Test Book A");
 
 		this.mockMvc
-				.perform(delete(String.format("/api/book/%s", bookView.getId())))
+				.perform(delete(String.format("/api/book/%s", bookView.id())))
 				.andExpect(status().isOk());
 
 		this.mockMvc
-				.perform(get(String.format("/api/book/%s", bookView.getId())))
+				.perform(get(String.format("/api/book/%s", bookView.id())))
 				.andExpect(status().isNotFound());
 	}
 
@@ -160,16 +161,16 @@ public class TestBookApi {
 	@WithAnonymousUser
 	public void testGetSuccess() throws Exception {
 		AuthorView authorView = authorTestDataFactory.createAuthor("Test Author A");
-		BookView bookView = bookTestDataFactory.createBook(List.of(authorView.getId()), "Test Book A");
+		BookView bookView = bookTestDataFactory.createBook(List.of(authorView.id()), "Test Book A");
 
 		MvcResult getResult = this.mockMvc
-				.perform(get(String.format("/api/book/%s", bookView.getId())))
+				.perform(get(String.format("/api/book/%s", bookView.id())))
 				.andExpect(status().isOk())
 				.andReturn();
 
 		BookView getBookView = fromJson(objectMapper, getResult.getResponse().getContentAsString(), BookView.class);
 
-		assertEquals(bookView.getId(), getBookView.getId(), "Book ids must be equal!");
+		assertEquals(bookView.id(), getBookView.id(), "Book ids must be equal!");
 	}
 
 	@Test
@@ -186,11 +187,11 @@ public class TestBookApi {
 	public void testGetBookAuthorsSuccess() throws Exception {
 		AuthorView authorView1 = authorTestDataFactory.createAuthor("Test Author A");
 		AuthorView authorView2 = authorTestDataFactory.createAuthor("Test Author B");
-		BookView bookView = bookTestDataFactory.createBook(List.of(authorView1.getId(), authorView2.getId()),
+		BookView bookView = bookTestDataFactory.createBook(List.of(authorView1.id(), authorView2.id()),
 				"Test Book A");
 
 		MvcResult getBooksResult = this.mockMvc
-				.perform(get(String.format("/api/book/%s/author", bookView.getId())))
+				.perform(get(String.format("/api/book/%s/author", bookView.id())))
 				.andExpect(status().isOk())
 				.andReturn();
 
@@ -199,9 +200,9 @@ public class TestBookApi {
 				new TypeReference<>() {
 				});
 
-		assertEquals(2, authorViewList.getItems().size(), "Book must have 2 authors");
-		assertEquals(authorView1.getFullName(), authorViewList.getItems().get(0).getFullName(), "Author name mismatch!");
-		assertEquals(authorView2.getFullName(), authorViewList.getItems().get(1).getFullName(), "Author name mismatch!");
+		assertEquals(2, authorViewList.items().size(), "Book must have 2 authors");
+		assertEquals(authorView1.fullName(), authorViewList.items().get(0).fullName(), "Author name mismatch!");
+		assertEquals(authorView2.fullName(), authorViewList.items().get(1).fullName(), "Author name mismatch!");
 	}
 
 }

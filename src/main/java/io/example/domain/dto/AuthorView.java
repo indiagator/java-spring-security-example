@@ -1,21 +1,18 @@
 package io.example.domain.dto;
 
-import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
-public class AuthorView {
+public record AuthorView(
+	 String id,
 
-	private String id;
+	 UserView creator,
+	 LocalDateTime createdAt,
 
-	private UserView creator;
-	private LocalDateTime createdAt;
-
-	private String fullName;
-	private String about;
-	private String nationality;
-	private List<String> genres;
+	 String fullName,
+	 String about,
+	 String nationality,
+	 List<String> genres
+) {
 
 }

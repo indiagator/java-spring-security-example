@@ -1,23 +1,28 @@
 package io.example.domain.dto;
 
-import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Data
-public class SearchAuthorsQuery {
+import lombok.Builder;
 
-	private String id;
+public record SearchAuthorsQuery(
+	String id,
 
-	private String creatorId;
-	private LocalDateTime createdAtStart;
-	private LocalDateTime createdAtEnd;
+	String creatorId,
+	LocalDateTime createdAtStart,
+	LocalDateTime createdAtEnd,
 
-	private String fullName;
-	private Set<String> genres;
+	String fullName,
+	Set<String> genres,
 
-	private String bookId;
-	private String bookTitle;
+	String bookId,
+	String bookTitle
+) {
 
+	@Builder
+  public SearchAuthorsQuery {}
+
+  public SearchAuthorsQuery() {
+    this(null, null, null, null, null, null, null, null);
+  }
 }

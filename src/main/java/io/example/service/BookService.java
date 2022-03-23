@@ -43,7 +43,7 @@ public class BookService {
 		bookEditMapper.update(request, book);
 
 		book = bookRepo.save(book);
-		if (!CollectionUtils.isEmpty(request.getAuthorIds())) {
+		if (!CollectionUtils.isEmpty(request.authorIds())) {
 			updateAuthors(book);
 		}
 

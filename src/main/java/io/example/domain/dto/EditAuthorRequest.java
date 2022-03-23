@@ -1,17 +1,22 @@
 package io.example.domain.dto;
 
-import lombok.Data;
-
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@Data
-public class EditAuthorRequest {
+import javax.validation.constraints.NotNull;
 
-	@NotNull
-	private String fullName;
-	private String about;
-	private String nationality;
-	private List<String> genres;
+import lombok.Builder;
 
+public record EditAuthorRequest(
+		@NotNull String fullName,
+		String about,
+		String nationality,
+		List<String> genres) {
+
+	@Builder
+	public EditAuthorRequest {
+	}
+
+	public EditAuthorRequest() {
+		this(null, null, null, null);
+	}
 }

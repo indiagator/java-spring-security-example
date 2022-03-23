@@ -46,11 +46,11 @@ public class TestUserAdminApi {
 
 	@Test
 	public void testCreateSuccess() throws Exception {
-		CreateUserRequest goodRequest = new CreateUserRequest();
-		goodRequest.setUsername(String.format("test.user.%d@nix.com", currentTimeMillis()));
-		goodRequest.setFullName("Test User A");
-		goodRequest.setPassword("Test12345_");
-		goodRequest.setRePassword("Test12345_");
+		CreateUserRequest goodRequest = new CreateUserRequest(
+			String.format("test.user.%d@nix.com", currentTimeMillis()),
+			"Test User A",
+			"Test12345_"
+		);
 
 		MvcResult createResult = this.mockMvc
 				.perform(post("/api/admin/user")
@@ -60,14 +60,15 @@ public class TestUserAdminApi {
 				.andReturn();
 
 		UserView userView = fromJson(objectMapper, createResult.getResponse().getContentAsString(), UserView.class);
-		assertNotNull(userView.getId(), "User id must not be null!");
-		assertEquals(goodRequest.getFullName(), userView.getFullName(), "User fullname  update isn't applied!");
+		assertNotNull(userView.id(), "User id must not be null!");
+		assertEquals(goodRequest.fullName(), userView.fullName(), "User fullname  update isn't applied!");
 	}
 
 	@Test
 	public void testCreateFail() throws Exception {
-		CreateUserRequest badRequest = new CreateUserRequest();
-		badRequest.setUsername("invalid.username");
+		CreateUserRequest badRequest = new CreateUserRequest(
+			"invalid.username", "", ""
+		);
 
 		this.mockMvc
 				.perform(post("/api/admin/user")
@@ -82,11 +83,11 @@ public class TestUserAdminApi {
 		UserView userView = userTestDataFactory.createUser(String.format("test.user.%d@nix.io", currentTimeMillis()),
 				"Test User A");
 
-		CreateUserRequest badRequest = new CreateUserRequest();
-		badRequest.setUsername(userView.getUsername());
-		badRequest.setFullName("Test User A");
-		badRequest.setPassword("Test12345_");
-		badRequest.setRePassword("Test12345_");
+		CreateUserRequest badRequest = new CreateUserRequest(
+			userView.username(),
+			"Test User A",
+			"Test12345_"
+		);
 
 		this.mockMvc
 				.perform(post("/api/admin/user")
@@ -98,11 +99,11 @@ public class TestUserAdminApi {
 
 	@Test
 	public void testCreatePasswordsMismatch() throws Exception {
-		CreateUserRequest badRequest = new CreateUserRequest();
-		badRequest.setUsername(String.format("test.user.%d@nix.com", currentTimeMillis()));
-		badRequest.setFullName("Test User A");
-		badRequest.setPassword("Test12345_");
-		badRequest.setRePassword("Test12345");
+		CreateUserRequest badRequest = new CreateUserRequest(
+			String.format("test.user.%d@nix.com", currentTimeMillis()),
+			"Test User A",
+			"Test12345_"
+		);
 
 		this.mockMvc
 				.perform(post("/api/admin/user")
@@ -117,18 +118,19 @@ public class TestUserAdminApi {
 		UserView userView = userTestDataFactory.createUser(String.format("test.user.%d@nix.io", currentTimeMillis()),
 				"Test User A");
 
-		UpdateUserRequest updateRequest = new UpdateUserRequest();
-		updateRequest.setFullName("Test User B");
+		UpdateUserRequest updateRequest = new UpdateUserRequest(
+			"Test User B", null
+		);
 
 		MvcResult updateResult = this.mockMvc
-				.perform(put(String.format("/api/admin/user/%s", userView.getId()))
+				.perform(put(String.format("/api/admin/user/%s", userView.id()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(toJson(objectMapper, updateRequest)))
 				.andExpect(status().isOk())
 				.andReturn();
 		UserView newUserView = fromJson(objectMapper, updateResult.getResponse().getContentAsString(), UserView.class);
 
-		assertEquals(updateRequest.getFullName(), newUserView.getFullName(), "User fullname update isn't applied!");
+		assertEquals(updateRequest.fullName(), newUserView.fullName(), "User fullname update isn't applied!");
 	}
 
 	@Test
@@ -139,7 +141,7 @@ public class TestUserAdminApi {
 		UpdateUserRequest updateRequest = new UpdateUserRequest();
 
 		this.mockMvc
-				.perform(put(String.format("/api/admin/user/%s", userView.getId()))
+				.perform(put(String.format("/api/admin/user/%s", userView.id()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(toJson(objectMapper, updateRequest)))
 				.andExpect(status().isBadRequest())
@@ -148,8 +150,9 @@ public class TestUserAdminApi {
 
 	@Test
 	public void testEditFailNotFound() throws Exception {
-		UpdateUserRequest updateRequest = new UpdateUserRequest();
-		updateRequest.setFullName("Test User B");
+		UpdateUserRequest updateRequest = new UpdateUserRequest(
+			"Test User B", null
+		);
 
 		this.mockMvc
 				.perform(put(String.format("/api/admin/user/%s", "5f07c259ffb98843e36a2aa9"))
@@ -165,11 +168,11 @@ public class TestUserAdminApi {
 				"Test User A");
 
 		this.mockMvc
-				.perform(delete(String.format("/api/admin/user/%s", userView.getId())))
+				.perform(delete(String.format("/api/admin/user/%s", userView.id())))
 				.andExpect(status().isOk());
 
 		this.mockMvc
-				.perform(get(String.format("/api/admin/user/%s", userView.getId())))
+				.perform(get(String.format("/api/admin/user/%s", userView.id())))
 				.andExpect(status().isNotFound());
 	}
 
@@ -187,18 +190,18 @@ public class TestUserAdminApi {
 				"Test User A");
 
 		this.mockMvc
-				.perform(delete(String.format("/api/admin/user/%s", userView.getId())))
+				.perform(delete(String.format("/api/admin/user/%s", userView.id())))
 				.andExpect(status().isOk());
 
 		this.mockMvc
-				.perform(get(String.format("/api/admin/user/%s", userView.getId())))
+				.perform(get(String.format("/api/admin/user/%s", userView.id())))
 				.andExpect(status().isNotFound());
 
-		CreateUserRequest goodRequest = new CreateUserRequest();
-		goodRequest.setUsername(userView.getUsername());
-		goodRequest.setFullName("Test User A");
-		goodRequest.setPassword("Test12345_");
-		goodRequest.setRePassword("Test12345_");
+		CreateUserRequest goodRequest = new CreateUserRequest(
+			userView.username(),
+			"Test User A",
+			"Test12345_"
+		);
 
 		MvcResult createResult = this.mockMvc
 				.perform(post("/api/admin/user")
@@ -208,8 +211,8 @@ public class TestUserAdminApi {
 				.andReturn();
 
 		UserView newUserView = fromJson(objectMapper, createResult.getResponse().getContentAsString(), UserView.class);
-		assertNotEquals(userView.getId(), newUserView.getId(), "User ids must not match!");
-		assertEquals(userView.getUsername(), newUserView.getUsername(), "User names must match!");
+		assertNotEquals(userView.id(), newUserView.id(), "User ids must not match!");
+		assertEquals(userView.username(), newUserView.username(), "User names must match!");
 	}
 
 	@Test
@@ -218,13 +221,13 @@ public class TestUserAdminApi {
 				"Test User A");
 
 		MvcResult getResult = this.mockMvc
-				.perform(get(String.format("/api/admin/user/%s", userView.getId())))
+				.perform(get(String.format("/api/admin/user/%s", userView.id())))
 				.andExpect(status().isOk())
 				.andReturn();
 
 		UserView newUserView = fromJson(objectMapper, getResult.getResponse().getContentAsString(), UserView.class);
 
-		assertEquals(userView.getId(), newUserView.getId(), "User ids must be equal!");
+		assertEquals(userView.id(), newUserView.id(), "User ids must be equal!");
 	}
 
 	@Test

@@ -63,7 +63,7 @@ public class BookApi {
 
 	@PostMapping("search")
 	public ListResponse<BookView> search(@RequestBody @Valid SearchRequest<SearchBooksQuery> request) {
-		return new ListResponse<>(bookService.searchBooks(request.getPage(), request.getQuery()));
+		return new ListResponse<BookView>(bookService.searchBooks(request.page(), request.query()));
 	}
 
 }

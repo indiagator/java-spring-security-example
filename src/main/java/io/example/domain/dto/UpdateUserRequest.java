@@ -1,15 +1,22 @@
 package io.example.domain.dto;
 
-import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
-@Data
-public class UpdateUserRequest {
+import javax.validation.constraints.NotBlank;
 
+import lombok.Builder;
+
+public record UpdateUserRequest(
 	@NotBlank
-	private String fullName;
-	private Set<String> authorities;
+	String fullName,
+	Set<String> authorities
+) {
 
+	@Builder
+	public UpdateUserRequest {
+	}
+
+	public UpdateUserRequest() {
+		this(null, null);
+	}
 }

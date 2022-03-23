@@ -1,23 +1,38 @@
 package io.example.domain.dto;
 
-import lombok.Data;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.Set;
 
-@Data
-public class CreateUserRequest {
+public record CreateUserRequest(
+		@NotBlank @Email String username,
+		@NotBlank String fullName,
+		@NotBlank String password,
+		@NotBlank String rePassword,
+		Set<String> authorities) {
 
-	@NotBlank
-	@Email
-	private String username;
-	@NotBlank
-	private String fullName;
-	@NotBlank
-	private String password;
-	@NotBlank
-	private String rePassword;
-	private Set<String> authorities;
+	public CreateUserRequest {
+		if (authorities == null) {
+			authorities = new HashSet<>();
+		}
+	}
 
+	public CreateUserRequest(
+		String username,
+		String fullName,
+		String password,
+		String rePassword
+	) {
+		this(username, fullName, password, rePassword, new HashSet<>());
+	}
+
+	public CreateUserRequest(
+		String username,
+		String fullName,
+		String password
+	) {
+		this(username, fullName, password, password, new HashSet<>());
+	}
 }

@@ -1,13 +1,9 @@
 package io.example.domain.dto;
 
-import lombok.Data;
+public record UserView(
+	String id,
 
-@Data
-public class UserView {
-
-	private String id;
-
-	private String username;
-	private String fullName;
-
+	String username,
+	String fullName
+) {
 }

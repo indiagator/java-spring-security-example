@@ -38,7 +38,7 @@ public class AuthApi {
 	public ResponseEntity<UserView> login(@RequestBody @Valid AuthRequest request) {
 		try {
 			Authentication authenticate = authenticationManager
-					.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+					.authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.password()));
 
 			User user = (User) authenticate.getPrincipal();
 

@@ -1,13 +1,16 @@
 package io.example.domain.mapper;
 
-import io.example.domain.dto.BookView;
-import io.example.domain.model.Book;
-import org.mapstruct.AfterMapping;
+import java.util.List;
+
+import org.bson.types.ObjectId;
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import io.example.domain.dto.BookView;
+import io.example.domain.dto.UserView;
+import io.example.domain.model.Book;
 
 @Mapper(componentModel = "spring", uses = ObjectIdMapper.class)
 public abstract class BookViewMapper {
@@ -19,13 +22,13 @@ public abstract class BookViewMapper {
 		this.userViewMapper = userViewMapper;
 	}
 
+	@Mapping(source = "creatorId", target = "creator", qualifiedByName = "idToUserView")
 	public abstract BookView toBookView(Book book);
 
 	public abstract List<BookView> toBookView(List<Book> books);
 
-	@AfterMapping
-	protected void after(Book book, @MappingTarget BookView bookView) {
-		bookView.setCreator(userViewMapper.toUserViewById(book.getCreatorId()));
+	@Named("idToUserView")
+	protected UserView idToUserView(ObjectId id) {
+		return userViewMapper.toUserViewById(id);
 	}
-
 }

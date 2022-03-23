@@ -1,5 +1,20 @@
 package io.example.service;
 
+import static java.lang.String.format;
+
+import java.util.List;
+import java.util.Optional;
+
+import javax.validation.ValidationException;
+
+import org.bson.types.ObjectId;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import io.example.domain.dto.CreateUserRequest;
 import io.example.domain.dto.Page;
 import io.example.domain.dto.SearchUsersQuery;
@@ -10,20 +25,6 @@ import io.example.domain.mapper.UserViewMapper;
 import io.example.domain.model.User;
 import io.example.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-
-import static java.lang.String.format;
 
 @Service
 @RequiredArgsConstructor
@@ -36,18 +37,15 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public UserView create(CreateUserRequest request) {
-		if (userRepo.findByUsername(request.getUsername()).isPresent()) {
+		if (userRepo.findByUsername(request.username()).isPresent()) {
 			throw new ValidationException("Username exists!");
 		}
-		if (!request.getPassword().equals(request.getRePassword())) {
+		if (!request.password().equals(request.rePassword())) {
 			throw new ValidationException("Passwords don't match!");
-		}
-		if (request.getAuthorities() == null) {
-			request.setAuthorities(new HashSet<>());
 		}
 
 		User user = userEditMapper.create(request);
-		user.setPassword(passwordEncoder.encode(request.getPassword()));
+		user.setPassword(passwordEncoder.encode(request.password()));
 
 		user = userRepo.save(user);
 
@@ -66,13 +64,14 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public UserView upsert(CreateUserRequest request) {
-		Optional<User> optionalUser = userRepo.findByUsername(request.getUsername());
+		Optional<User> optionalUser = userRepo.findByUsername(request.username());
 
 		if (optionalUser.isEmpty()) {
 			return create(request);
 		} else {
-			UpdateUserRequest updateUserRequest = new UpdateUserRequest();
-			updateUserRequest.setFullName(request.getFullName());
+			UpdateUserRequest updateUserRequest = new UpdateUserRequest(
+				request.fullName(), null
+			);
 			return update(optionalUser.get().getId(), updateUserRequest);
 		}
 	}

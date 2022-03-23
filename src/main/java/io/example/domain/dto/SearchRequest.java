@@ -1,28 +1,22 @@
 package io.example.domain.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class SearchRequest<T> {
+public record SearchRequest<T>(
+	@Valid
+	@NotNull
+	 Page page,
 
-	public SearchRequest(T query) {
-		this.page = new Page();
-		this.query = query;
+	@Valid
+	@NotNull
+	T query
+) {
+
+	public SearchRequest {
 	}
 
-	@Valid
-	@NotNull
-	private Page page;
-
-	@Valid
-	@NotNull
-	private T query;
-
+	public SearchRequest(T query) {
+		this(new Page(), query);
+	}
 }

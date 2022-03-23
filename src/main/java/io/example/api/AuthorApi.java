@@ -1,5 +1,18 @@
 package io.example.api;
 
+import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
+
+import org.bson.types.ObjectId;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.example.domain.dto.AuthorView;
 import io.example.domain.dto.BookView;
 import io.example.domain.dto.EditAuthorRequest;
@@ -11,18 +24,6 @@ import io.example.service.AuthorService;
 import io.example.service.BookService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.security.RolesAllowed;
-import javax.validation.Valid;
 
 @Tag(name = "Author")
 @RestController
@@ -63,7 +64,7 @@ public class AuthorApi {
 
 	@PostMapping("search")
 	public ListResponse<AuthorView> search(@RequestBody @Valid SearchRequest<SearchAuthorsQuery> request) {
-		return new ListResponse<>(authorService.searchAuthors(request.getPage(), request.getQuery()));
+		return new ListResponse<AuthorView>(authorService.searchAuthors(request.page(), request.query()));
 	}
 
 }

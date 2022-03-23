@@ -29,22 +29,23 @@ public class BookTestDataFactory {
 			String publisher,
 			LocalDate publishDate,
 			Integer hardcover) {
-		EditBookRequest createRequest = new EditBookRequest();
-		createRequest.setAuthorIds(authorIds);
-		createRequest.setTitle(title);
-		createRequest.setAbout(about);
-		createRequest.setLanguage(language);
-		createRequest.setGenres(genres);
-		createRequest.setIsbn13(isbn13);
-		createRequest.setIsbn10(isbn10);
-		createRequest.setPublisher(publisher);
-		createRequest.setPublishDate(publishDate);
-		createRequest.setHardcover(hardcover);
+		EditBookRequest createRequest = new EditBookRequest(
+			authorIds,
+			title,
+			about,
+			language,
+			genres,
+			isbn13,
+			isbn10,
+			publisher,
+			publishDate,
+			hardcover
+		);
 
 		BookView bookView = bookService.create(createRequest);
 
-		assertNotNull(bookView.getId(), "Book id must not be null!");
-		assertEquals(title, bookView.getTitle(), "Book title update isn't applied!");
+		assertNotNull(bookView.id(), "Book id must not be null!");
+		assertEquals(title, bookView.title(), "Book title update isn't applied!");
 
 		return bookView;
 	}
