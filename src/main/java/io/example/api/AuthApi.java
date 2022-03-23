@@ -24,34 +24,35 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @Tag(name = "Authentication")
-@RestController @RequestMapping(path = "api/public")
+@RestController
+@RequestMapping(path = "api/public")
 @RequiredArgsConstructor
 public class AuthApi {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final UserViewMapper userViewMapper;
-    private final UserService userService;
+	private final AuthenticationManager authenticationManager;
+	private final JwtTokenUtil jwtTokenUtil;
+	private final UserViewMapper userViewMapper;
+	private final UserService userService;
 
-    @PostMapping("login")
-    public ResponseEntity<UserView> login(@RequestBody @Valid AuthRequest request) {
-        try {
-            Authentication authenticate = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+	@PostMapping("login")
+	public ResponseEntity<UserView> login(@RequestBody @Valid AuthRequest request) {
+		try {
+			Authentication authenticate = authenticationManager
+					.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-            User user = (User) authenticate.getPrincipal();
+			User user = (User) authenticate.getPrincipal();
 
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(user))
-                    .body(userViewMapper.toUserView(user));
-        } catch (BadCredentialsException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-    }
+			return ResponseEntity.ok()
+					.header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(user))
+					.body(userViewMapper.toUserView(user));
+		} catch (BadCredentialsException ex) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+	}
 
-    @PostMapping("register")
-    public UserView register(@RequestBody @Valid CreateUserRequest request) {
-        return userService.create(request);
-    }
+	@PostMapping("register")
+	public UserView register(@RequestBody @Valid CreateUserRequest request) {
+		return userService.create(request);
+	}
 
 }

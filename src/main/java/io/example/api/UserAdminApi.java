@@ -24,36 +24,37 @@ import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
 @Tag(name = "UserAdmin")
-@RestController @RequestMapping(path = "api/admin/user")
+@RestController
+@RequestMapping(path = "api/admin/user")
 @RolesAllowed(Role.USER_ADMIN)
 @RequiredArgsConstructor
 public class UserAdminApi {
 
-    private final UserService userService;
+	private final UserService userService;
 
-    @PostMapping
-    public UserView create(@RequestBody @Valid CreateUserRequest request) {
-        return userService.create(request);
-    }
+	@PostMapping
+	public UserView create(@RequestBody @Valid CreateUserRequest request) {
+		return userService.create(request);
+	}
 
-    @PutMapping("{id}")
-    public UserView update(@PathVariable String id, @RequestBody @Valid UpdateUserRequest request) {
-        return userService.update(new ObjectId(id), request);
-    }
+	@PutMapping("{id}")
+	public UserView update(@PathVariable String id, @RequestBody @Valid UpdateUserRequest request) {
+		return userService.update(new ObjectId(id), request);
+	}
 
-    @DeleteMapping("{id}")
-    public UserView delete(@PathVariable String id) {
-        return userService.delete(new ObjectId(id));
-    }
+	@DeleteMapping("{id}")
+	public UserView delete(@PathVariable String id) {
+		return userService.delete(new ObjectId(id));
+	}
 
-    @GetMapping("{id}")
-    public UserView get(@PathVariable String id) {
-        return userService.getUser(new ObjectId(id));
-    }
+	@GetMapping("{id}")
+	public UserView get(@PathVariable String id) {
+		return userService.getUser(new ObjectId(id));
+	}
 
-    @PostMapping("search")
-    public ListResponse<UserView> search(@RequestBody SearchRequest<SearchUsersQuery> request) {
-        return new ListResponse<>(userService.searchUsers(request.getPage(), request.getQuery()));
-    }
+	@PostMapping("search")
+	public ListResponse<UserView> search(@RequestBody SearchRequest<SearchUsersQuery> request) {
+		return new ListResponse<>(userService.searchUsers(request.getPage(), request.getQuery()));
+	}
 
 }

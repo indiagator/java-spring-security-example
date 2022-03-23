@@ -12,9 +12,9 @@ import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 @Mapper(componentModel = "spring", uses = ObjectIdMapper.class)
 public interface BookEditMapper {
 
-    Book create(EditBookRequest request);
+	Book create(EditBookRequest request);
 
-    @BeanMapping(nullValueCheckStrategy = ALWAYS, nullValuePropertyMappingStrategy = IGNORE)
-    void update(EditBookRequest request, @MappingTarget Book book);
+	@BeanMapping(nullValueCheckStrategy = ALWAYS, nullValuePropertyMappingStrategy = IGNORE)
+	void update(EditBookRequest request, @MappingTarget Book book);
 
 }

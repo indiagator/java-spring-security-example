@@ -17,25 +17,25 @@ import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 @Mapper(componentModel = "spring", uses = ObjectIdMapper.class)
 public abstract class UserEditMapper {
 
-    @Mapping(target = "authorities", ignore = true)
-    public abstract User create(CreateUserRequest request);
+	@Mapping(target = "authorities", ignore = true)
+	public abstract User create(CreateUserRequest request);
 
-    @BeanMapping(nullValueCheckStrategy = ALWAYS, nullValuePropertyMappingStrategy = IGNORE)
-    @Mapping(target = "authorities", ignore = true)
-    public abstract void update(UpdateUserRequest request, @MappingTarget User user);
+	@BeanMapping(nullValueCheckStrategy = ALWAYS, nullValuePropertyMappingStrategy = IGNORE)
+	@Mapping(target = "authorities", ignore = true)
+	public abstract void update(UpdateUserRequest request, @MappingTarget User user);
 
-    @AfterMapping
-    protected void afterCreate(CreateUserRequest request, @MappingTarget User user) {
-        if (request.getAuthorities() != null) {
-            user.setAuthorities(request.getAuthorities().stream().map(Role::new).collect(toSet()));
-        }
-    }
+	@AfterMapping
+	protected void afterCreate(CreateUserRequest request, @MappingTarget User user) {
+		if (request.getAuthorities() != null) {
+			user.setAuthorities(request.getAuthorities().stream().map(Role::new).collect(toSet()));
+		}
+	}
 
-    @AfterMapping
-    protected void afterUpdate(UpdateUserRequest request, @MappingTarget User user) {
-        if (request.getAuthorities() != null) {
-            user.setAuthorities(request.getAuthorities().stream().map(Role::new).collect(toSet()));
-        }
-    }
+	@AfterMapping
+	protected void afterUpdate(UpdateUserRequest request, @MappingTarget User user) {
+		if (request.getAuthorities() != null) {
+			user.setAuthorities(request.getAuthorities().stream().map(Role::new).collect(toSet()));
+		}
+	}
 
 }

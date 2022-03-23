@@ -12,20 +12,20 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = ObjectIdMapper.class)
 public abstract class BookViewMapper {
 
-    private UserViewMapper userViewMapper;
+	private UserViewMapper userViewMapper;
 
-    @Autowired
-    public void setUserViewMapper(UserViewMapper userViewMapper) {
-        this.userViewMapper = userViewMapper;
-    }
+	@Autowired
+	public void setUserViewMapper(UserViewMapper userViewMapper) {
+		this.userViewMapper = userViewMapper;
+	}
 
-    public abstract BookView toBookView(Book book);
+	public abstract BookView toBookView(Book book);
 
-    public abstract List<BookView> toBookView(List<Book> books);
+	public abstract List<BookView> toBookView(List<Book> books);
 
-    @AfterMapping
-    protected void after(Book book, @MappingTarget BookView bookView) {
-        bookView.setCreator(userViewMapper.toUserViewById(book.getCreatorId()));
-    }
+	@AfterMapping
+	protected void after(Book book, @MappingTarget BookView bookView) {
+		bookView.setCreator(userViewMapper.toUserViewById(book.getCreatorId()));
+	}
 
 }

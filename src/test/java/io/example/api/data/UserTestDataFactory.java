@@ -13,33 +13,33 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Service
 public class UserTestDataFactory {
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    public UserView createUser(String username,
-                               String fullName,
-                               String password) {
-        CreateUserRequest createRequest = new CreateUserRequest();
-        createRequest.setUsername(username);
-        createRequest.setFullName(fullName);
-        createRequest.setPassword(password);
-        createRequest.setRePassword(password);
+	public UserView createUser(String username,
+			String fullName,
+			String password) {
+		CreateUserRequest createRequest = new CreateUserRequest();
+		createRequest.setUsername(username);
+		createRequest.setFullName(fullName);
+		createRequest.setPassword(password);
+		createRequest.setRePassword(password);
 
-        UserView userView = userService.create(createRequest);
+		UserView userView = userService.create(createRequest);
 
-        assertNotNull(userView.getId(), "User id must not be null!");
-        assertEquals(fullName, userView.getFullName(), "User name update isn't applied!");
+		assertNotNull(userView.getId(), "User id must not be null!");
+		assertEquals(fullName, userView.getFullName(), "User name update isn't applied!");
 
-        return userView;
-    }
+		return userView;
+	}
 
-    public UserView createUser(String username,
-                               String fullName) {
-        return createUser(username, fullName, "Test12345_");
-    }
+	public UserView createUser(String username,
+			String fullName) {
+		return createUser(username, fullName, "Test12345_");
+	}
 
-    public void deleteUser(String id) {
-        userService.delete(new ObjectId(id));
-    }
+	public void deleteUser(String id) {
+		userService.delete(new ObjectId(id));
+	}
 
 }

@@ -8,14 +8,14 @@ import java.util.List;
 @Data
 public class AuthorView {
 
-    private String id;
+	private String id;
 
-    private UserView creator;
-    private LocalDateTime createdAt;
+	private UserView creator;
+	private LocalDateTime createdAt;
 
-    private String fullName;
-    private String about;
-    private String nationality;
-    private List<String> genres;
+	private String fullName;
+	private String about;
+	private String nationality;
+	private List<String> genres;
 
 }

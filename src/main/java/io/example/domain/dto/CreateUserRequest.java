@@ -9,14 +9,15 @@ import java.util.Set;
 @Data
 public class CreateUserRequest {
 
-    @NotBlank @Email
-    private String username;
-    @NotBlank
-    private String fullName;
-    @NotBlank
-    private String password;
-    @NotBlank
-    private String rePassword;
-    private Set<String> authorities;
+	@NotBlank
+	@Email
+	private String username;
+	@NotBlank
+	private String fullName;
+	@NotBlank
+	private String password;
+	@NotBlank
+	private String rePassword;
+	private Set<String> authorities;
 
 }
