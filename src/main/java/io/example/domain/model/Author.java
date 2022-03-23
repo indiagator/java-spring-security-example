@@ -1,6 +1,9 @@
 package io.example.domain.model;
 
-import lombok.Data;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -9,14 +12,12 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
 @Document(collection = "authors")
-@Data
-public class Author implements Serializable {
+@Getter @Setter
+public class Author extends ComparableEntity {
 
 	@Id
 	private ObjectId id;

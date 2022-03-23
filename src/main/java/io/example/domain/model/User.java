@@ -12,11 +12,12 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Document(collection = "users")
-@Data
-public class User implements UserDetails {
+@Getter @Setter
+public class User extends ComparableEntity implements UserDetails {
 
 	@Id
 	private ObjectId id;
@@ -58,5 +59,4 @@ public class User implements UserDetails {
 	public boolean isCredentialsNonExpired() {
 		return enabled;
 	}
-
 }
