@@ -55,10 +55,10 @@ class AuthorRepoCustomImpl implements AuthorRepoCustom {
 		List<AggregationOperation> operations = new ArrayList<>();
 
 		List<Criteria> criteriaList = new ArrayList<>();
-		if (!StringUtils.isEmpty(query.getId())) {
+		if (StringUtils.hasText(query.getId())) {
 			criteriaList.add(Criteria.where("id").is(new ObjectId(query.getId())));
 		}
-		if (!StringUtils.isEmpty(query.getCreatorId())) {
+		if (StringUtils.hasText(query.getCreatorId())) {
 			criteriaList.add(Criteria.where("creatorId").is(new ObjectId(query.getCreatorId())));
 		}
 		if (query.getCreatedAtStart() != null) {
@@ -67,7 +67,7 @@ class AuthorRepoCustomImpl implements AuthorRepoCustom {
 		if (query.getCreatedAtEnd() != null) {
 			criteriaList.add(Criteria.where("createdAt").lt(query.getCreatedAtEnd()));
 		}
-		if (!StringUtils.isEmpty(query.getFullName())) {
+		if (StringUtils.hasText(query.getFullName())) {
 			criteriaList.add(Criteria.where("fullName").regex(query.getFullName(), "i"));
 		}
 		if (!CollectionUtils.isEmpty(query.getGenres())) {
@@ -79,10 +79,10 @@ class AuthorRepoCustomImpl implements AuthorRepoCustom {
 		}
 
 		criteriaList = new ArrayList<>();
-		if (!StringUtils.isEmpty(query.getBookId())) {
+		if (StringUtils.hasText(query.getBookId())) {
 			criteriaList.add(Criteria.where("book._id").is(new ObjectId(query.getBookId())));
 		}
-		if (!StringUtils.isEmpty(query.getBookTitle())) {
+		if (StringUtils.hasText(query.getBookTitle())) {
 			criteriaList.add(Criteria.where("book.title").regex(query.getBookTitle(), "i"));
 		}
 		if (!criteriaList.isEmpty()) {

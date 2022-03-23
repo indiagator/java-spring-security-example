@@ -55,10 +55,10 @@ class BookRepoCustomImpl implements BookRepoCustom {
 		List<AggregationOperation> operations = new ArrayList<>();
 
 		List<Criteria> criteriaList = new ArrayList<>();
-		if (!StringUtils.isEmpty(query.getId())) {
+		if (StringUtils.hasText(query.getId())) {
 			criteriaList.add(Criteria.where("id").is(new ObjectId(query.getId())));
 		}
-		if (!StringUtils.isEmpty(query.getCreatorId())) {
+		if (StringUtils.hasText(query.getCreatorId())) {
 			criteriaList.add(Criteria.where("creatorId").is(new ObjectId(query.getCreatorId())));
 		}
 		if (query.getCreatedAtStart() != null) {
@@ -67,19 +67,19 @@ class BookRepoCustomImpl implements BookRepoCustom {
 		if (query.getCreatedAtEnd() != null) {
 			criteriaList.add(Criteria.where("createdAt").lt(query.getCreatedAtEnd()));
 		}
-		if (!StringUtils.isEmpty(query.getTitle())) {
+		if (StringUtils.hasText(query.getTitle())) {
 			criteriaList.add(Criteria.where("title").regex(query.getTitle(), "i"));
 		}
 		if (!CollectionUtils.isEmpty(query.getGenres())) {
 			criteriaList.add(Criteria.where("genres").all(query.getGenres()));
 		}
-		if (!StringUtils.isEmpty(query.getIsbn13())) {
+		if (StringUtils.hasText(query.getIsbn13())) {
 			criteriaList.add(Criteria.where("isbn13").is(query.getIsbn13()));
 		}
-		if (!StringUtils.isEmpty(query.getIsbn10())) {
+		if (StringUtils.hasText(query.getIsbn10())) {
 			criteriaList.add(Criteria.where("isbn10").is(query.getIsbn10()));
 		}
-		if (!StringUtils.isEmpty(query.getPublisher())) {
+		if (StringUtils.hasText(query.getPublisher())) {
 			criteriaList.add(Criteria.where("publisher").regex(query.getPublisher(), "i"));
 		}
 		if (query.getPublishDateStart() != null) {
@@ -94,10 +94,10 @@ class BookRepoCustomImpl implements BookRepoCustom {
 		}
 
 		criteriaList = new ArrayList<>();
-		if (!StringUtils.isEmpty(query.getAuthorId())) {
+		if (StringUtils.hasText(query.getAuthorId())) {
 			criteriaList.add(Criteria.where("author._id").is(new ObjectId(query.getAuthorId())));
 		}
-		if (!StringUtils.isEmpty(query.getAuthorFullName())) {
+		if (StringUtils.hasText(query.getAuthorFullName())) {
 			criteriaList.add(Criteria.where("author.fullName").regex(query.getAuthorFullName(), "i"));
 		}
 		if (!criteriaList.isEmpty()) {
