@@ -1,11 +1,23 @@
-package io.example.configuration.security;
+package io.example.configuration;
 
-import io.example.repository.UserRepo;
+import static java.lang.String.format;
+
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,36 +28,42 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
+import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import javax.servlet.http.HttpServletResponse;
-
-import static java.lang.String.format;
+import io.example.repository.UserRepo;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private final Logger logger;
 	private final UserRepo userRepo;
-	private final JwtTokenFilter jwtTokenFilter;
+
+	@Value("${jwt.public.key}")
+	private RSAPublicKey rsaPublicKey;
+	@Value("${jwt.private.key}")
+	private RSAPrivateKey rsaPrivateKey;
 
 	@Value("${springdoc.api-docs.path}")
 	private String restApiDocPath;
 	@Value("${springdoc.swagger-ui.path}")
 	private String swaggerPath;
 
-	public SecurityConfig(Logger logger,
-			UserRepo userRepo,
-			JwtTokenFilter jwtTokenFilter) {
+	public SecurityConfig(
+			Logger logger,
+			UserRepo userRepo) {
 		super();
 
-		this.logger = logger;
 		this.userRepo = userRepo;
-		this.jwtTokenFilter = jwtTokenFilter;
 
 		// Inherit security context in async function calls
 		SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
@@ -58,12 +76,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.orElseThrow(
 						() -> new UsernameNotFoundException(
 								format("User: %s, not found", username))));
-	}
-
-	// Set password encoding schema
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
 	}
 
 	@Override
@@ -79,13 +91,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		// Set unauthorized requests exception handler
 		http = http
-				.exceptionHandling()
-				.authenticationEntryPoint(
-						(request, response, ex) -> {
-							logger.error("Unauthorized request - {}", ex.getMessage());
-							response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
-						})
-				.and();
+				.exceptionHandling((exceptions) -> exceptions
+						.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+						.accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
 
 		// Set permissions on endpoints
 		http.authorizeRequests()
@@ -100,10 +108,40 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.GET, "/api/book/**").permitAll()
 				.antMatchers(HttpMethod.POST, "/api/book/search").permitAll()
 				// Our private endpoints
-				.anyRequest().authenticated();
+				.anyRequest().authenticated()
+				// Set up oauth2 resource server
+				.and().httpBasic(Customizer.withDefaults())
+				.oauth2ResourceServer()
+				.jwt();
+	}
 
-		// Add JWT token filter
-		http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+	@Bean
+	public JwtEncoder jwtEncoder() {
+		JWK jwk = new RSAKey.Builder(this.rsaPublicKey).privateKey(this.rsaPrivateKey).build();
+		JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+		return new NimbusJwtEncoder(jwks);
+	}
+
+	@Bean
+	public JwtDecoder jwtDecoder() {
+		return NimbusJwtDecoder.withPublicKey(this.rsaPublicKey).build();
+	}
+
+	@Bean
+	public JwtAuthenticationConverter jwtAuthenticationConverter() {
+		JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+		jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+		jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+
+		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+		return jwtAuthenticationConverter;
+	}
+
+	// Set password encoding schema
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 
 	// Used by spring security if CORS is enabled.

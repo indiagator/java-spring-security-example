@@ -70,7 +70,7 @@ public class UserService implements UserDetailsService {
 			return create(request);
 		} else {
 			UpdateUserRequest updateUserRequest = new UpdateUserRequest(
-				request.fullName(), null
+				request.fullName(), request.authorities()
 			);
 			return update(optionalUser.get().getId(), updateUserRequest);
 		}
