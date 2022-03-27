@@ -1,10 +1,9 @@
 package io.example.domain.dto;
 
-import java.util.List;
+import lombok.Builder;
 
 import javax.validation.constraints.NotNull;
-
-import lombok.Builder;
+import java.util.List;
 
 public record EditAuthorRequest(
 		@NotNull String fullName,

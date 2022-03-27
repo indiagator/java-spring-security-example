@@ -1,9 +1,9 @@
 package io.example.domain.dto;
 
+import lombok.Builder;
+
 import java.time.LocalDateTime;
 import java.util.Set;
-
-import lombok.Builder;
 
 public record SearchAuthorsQuery(
 	String id,

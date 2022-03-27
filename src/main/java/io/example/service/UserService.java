@@ -1,20 +1,5 @@
 package io.example.service;
 
-import static java.lang.String.format;
-
-import java.util.List;
-import java.util.Optional;
-
-import javax.validation.ValidationException;
-
-import org.bson.types.ObjectId;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import io.example.domain.dto.CreateUserRequest;
 import io.example.domain.dto.Page;
 import io.example.domain.dto.SearchUsersQuery;
@@ -25,6 +10,19 @@ import io.example.domain.mapper.UserViewMapper;
 import io.example.domain.model.User;
 import io.example.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.validation.ValidationException;
+import java.util.List;
+import java.util.Optional;
+
+import static java.lang.String.format;
 
 @Service
 @RequiredArgsConstructor

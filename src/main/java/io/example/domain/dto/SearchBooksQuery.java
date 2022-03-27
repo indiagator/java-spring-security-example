@@ -1,10 +1,10 @@
 package io.example.domain.dto;
 
+import lombok.Builder;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
-
-import lombok.Builder;
 
 public record SearchBooksQuery(
 	String id,

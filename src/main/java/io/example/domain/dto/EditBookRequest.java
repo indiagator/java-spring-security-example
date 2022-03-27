@@ -1,11 +1,10 @@
 package io.example.domain.dto;
 
-import java.time.LocalDate;
-import java.util.List;
+import lombok.Builder;
 
 import javax.validation.constraints.NotNull;
-
-import lombok.Builder;
+import java.time.LocalDate;
+import java.util.List;
 
 public record EditBookRequest(
 		List<@NotNull String> authorIds,

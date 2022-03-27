@@ -1,16 +1,15 @@
 package io.example.domain.mapper;
 
-import java.util.List;
-
+import io.example.domain.dto.BookView;
+import io.example.domain.dto.UserView;
+import io.example.domain.model.Book;
 import org.bson.types.ObjectId;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import io.example.domain.dto.BookView;
-import io.example.domain.dto.UserView;
-import io.example.domain.model.Book;
+import java.util.List;
 
 @Mapper(componentModel = "spring", uses = ObjectIdMapper.class)
 public abstract class BookViewMapper {

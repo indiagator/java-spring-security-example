@@ -1,10 +1,9 @@
 package io.example.domain.dto;
 
-import java.util.Set;
+import lombok.Builder;
 
 import javax.validation.constraints.NotBlank;
-
-import lombok.Builder;
+import java.util.Set;
 
 public record UpdateUserRequest(
 	@NotBlank

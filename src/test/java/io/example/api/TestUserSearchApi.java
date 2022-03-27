@@ -7,12 +7,13 @@ import io.example.domain.dto.ListResponse;
 import io.example.domain.dto.SearchRequest;
 import io.example.domain.dto.SearchUsersQuery;
 import io.example.domain.dto.UserView;
+import io.example.domain.model.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -25,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithUserDetails("ada.lovelace@nix.io")
+@WithMockUser(roles = Role.USER_ADMIN)
 public class TestUserSearchApi {
 
 	private final MockMvc mockMvc;

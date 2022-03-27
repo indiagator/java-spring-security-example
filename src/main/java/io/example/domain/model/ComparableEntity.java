@@ -1,8 +1,8 @@
 package io.example.domain.model;
 
-import java.io.Serializable;
-
 import org.bson.types.ObjectId;
+
+import java.io.Serializable;
 
 public abstract class ComparableEntity implements Serializable {
 
