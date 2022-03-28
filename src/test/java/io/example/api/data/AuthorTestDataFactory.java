@@ -15,42 +15,42 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Service
 public class AuthorTestDataFactory {
 
-	@Autowired
-	private AuthorService authorService;
+  @Autowired
+  private AuthorService authorService;
 
-	public AuthorView createAuthor(String fullName,
-			String about,
-			String nationality,
-			List<String> genres) {
-		EditAuthorRequest createRequest = new EditAuthorRequest(
-			fullName, about, nationality, genres
-		);
+  public AuthorView createAuthor(String fullName,
+                                 String about,
+                                 String nationality,
+                                 List<String> genres) {
+    EditAuthorRequest createRequest = new EditAuthorRequest(
+      fullName, about, nationality, genres
+    );
 
-		AuthorView authorView = authorService.create(createRequest);
+    AuthorView authorView = authorService.create(createRequest);
 
-		assertNotNull(authorView.id(), "Author id must not be null!");
-		assertEquals(fullName, authorView.fullName(), "Author name update isn't applied!");
+    assertNotNull(authorView.id(), "Author id must not be null!");
+    assertEquals(fullName, authorView.fullName(), "Author name update isn't applied!");
 
-		return authorView;
-	}
+    return authorView;
+  }
 
-	public AuthorView createAuthor(String fullName,
-			String about,
-			String nationality) {
-		return createAuthor(fullName, about, nationality, null);
-	}
+  public AuthorView createAuthor(String fullName,
+                                 String about,
+                                 String nationality) {
+    return createAuthor(fullName, about, nationality, null);
+  }
 
-	public AuthorView createAuthor(String fullName,
-			String about) {
-		return createAuthor(fullName, about, null, null);
-	}
+  public AuthorView createAuthor(String fullName,
+                                 String about) {
+    return createAuthor(fullName, about, null, null);
+  }
 
-	public AuthorView createAuthor(String fullName) {
-		return createAuthor(fullName, null, null, null);
-	}
+  public AuthorView createAuthor(String fullName) {
+    return createAuthor(fullName, null, null, null);
+  }
 
-	public void deleteAuthor(String id) {
-		authorService.delete(new ObjectId(id));
-	}
+  public void deleteAuthor(String id) {
+    authorService.delete(new ObjectId(id));
+  }
 
 }

@@ -30,40 +30,40 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class BookApi {
 
-	private final BookService bookService;
-	private final AuthorService authorService;
+  private final BookService bookService;
+  private final AuthorService authorService;
 
-	@RolesAllowed(Role.BOOK_ADMIN)
-	@PostMapping
-	public BookView create(@RequestBody @Valid EditBookRequest request) {
-		return bookService.create(request);
-	}
+  @RolesAllowed(Role.BOOK_ADMIN)
+  @PostMapping
+  public BookView create(@RequestBody @Valid EditBookRequest request) {
+    return bookService.create(request);
+  }
 
-	@RolesAllowed(Role.BOOK_ADMIN)
-	@PutMapping("{id}")
-	public BookView edit(@PathVariable String id, @RequestBody @Valid EditBookRequest request) {
-		return bookService.update(new ObjectId(id), request);
-	}
+  @RolesAllowed(Role.BOOK_ADMIN)
+  @PutMapping("{id}")
+  public BookView edit(@PathVariable String id, @RequestBody @Valid EditBookRequest request) {
+    return bookService.update(new ObjectId(id), request);
+  }
 
-	@RolesAllowed(Role.BOOK_ADMIN)
-	@DeleteMapping("{id}")
-	public BookView delete(@PathVariable String id) {
-		return bookService.delete(new ObjectId(id));
-	}
+  @RolesAllowed(Role.BOOK_ADMIN)
+  @DeleteMapping("{id}")
+  public BookView delete(@PathVariable String id) {
+    return bookService.delete(new ObjectId(id));
+  }
 
-	@GetMapping("{id}")
-	public BookView get(@PathVariable String id) {
-		return bookService.getBook(new ObjectId(id));
-	}
+  @GetMapping("{id}")
+  public BookView get(@PathVariable String id) {
+    return bookService.getBook(new ObjectId(id));
+  }
 
-	@GetMapping("{id}/author")
-	public ListResponse<AuthorView> getAuthors(@PathVariable String id) {
-		return new ListResponse<>(authorService.getBookAuthors(new ObjectId(id)));
-	}
+  @GetMapping("{id}/author")
+  public ListResponse<AuthorView> getAuthors(@PathVariable String id) {
+    return new ListResponse<>(authorService.getBookAuthors(new ObjectId(id)));
+  }
 
-	@PostMapping("search")
-	public ListResponse<BookView> search(@RequestBody @Valid SearchRequest<SearchBooksQuery> request) {
-		return new ListResponse<BookView>(bookService.searchBooks(request.page(), request.query()));
-	}
+  @PostMapping("search")
+  public ListResponse<BookView> search(@RequestBody @Valid SearchRequest<SearchBooksQuery> request) {
+    return new ListResponse<BookView>(bookService.searchBooks(request.page(), request.query()));
+  }
 
 }

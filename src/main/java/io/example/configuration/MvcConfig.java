@@ -11,11 +11,11 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @EnableCaching
 public class MvcConfig implements WebMvcConfigurer {
 
-	@Bean
-	public ViewResolver getViewResolver() {
-		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-		resolver.setPrefix("/");
-		resolver.setSuffix(".html");
-		return resolver;
-	}
+  @Bean
+  public ViewResolver getViewResolver() {
+    InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+    resolver.setPrefix("/");
+    resolver.setSuffix(".html");
+    return resolver;
+  }
 }

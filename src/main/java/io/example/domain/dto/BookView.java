@@ -5,18 +5,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record BookView(
-		String id,
+  String id,
 
-		UserView creator,
-		LocalDateTime createdAt,
+  UserView creator,
+  LocalDateTime createdAt,
 
-		String title,
-		String about,
-		String language,
-		List<String> genres,
-		String isbn13,
-		String isbn10,
-		String publisher,
-		LocalDate publishDate,
-		int hardcover) {
+  String title,
+  String about,
+  String language,
+  List<String> genres,
+  String isbn13,
+  String isbn10,
+  String publisher,
+  LocalDate publishDate,
+  int hardcover) {
+
 }

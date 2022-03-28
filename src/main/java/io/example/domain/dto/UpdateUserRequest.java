@@ -6,16 +6,16 @@ import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 public record UpdateUserRequest(
-	@NotBlank
-	String fullName,
-	Set<String> authorities
+  @NotBlank
+  String fullName,
+  Set<String> authorities
 ) {
 
-	@Builder
-	public UpdateUserRequest {
-	}
+  @Builder
+  public UpdateUserRequest {
+  }
 
-	public UpdateUserRequest() {
-		this(null, null);
-	}
+  public UpdateUserRequest() {
+    this(null, null);
+  }
 }

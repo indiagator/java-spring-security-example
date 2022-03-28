@@ -4,15 +4,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record AuthorView(
-	 String id,
+  String id,
 
-	 UserView creator,
-	 LocalDateTime createdAt,
+  UserView creator,
+  LocalDateTime createdAt,
 
-	 String fullName,
-	 String about,
-	 String nationality,
-	 List<String> genres
+  String fullName,
+  String about,
+  String nationality,
+  List<String> genres
 ) {
 
 }

@@ -14,20 +14,20 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = ObjectIdMapper.class)
 public abstract class AuthorViewMapper {
 
-	private UserViewMapper userViewMapper;
+  private UserViewMapper userViewMapper;
 
-	@Autowired
-	public void setUserViewMapper(UserViewMapper userViewMapper) {
-		this.userViewMapper = userViewMapper;
-	}
+  @Autowired
+  public void setUserViewMapper(UserViewMapper userViewMapper) {
+    this.userViewMapper = userViewMapper;
+  }
 
-	@Mapping(source = "creatorId", target = "creator", qualifiedByName = "idToUserView")
-	public abstract AuthorView toAuthorView(Author author);
+  @Mapping(source = "creatorId", target = "creator", qualifiedByName = "idToUserView")
+  public abstract AuthorView toAuthorView(Author author);
 
-	public abstract List<AuthorView> toAuthorView(List<Author> authors);
+  public abstract List<AuthorView> toAuthorView(List<Author> authors);
 
-	@Named("idToUserView")
-	protected UserView idToUserView(ObjectId id) {
-		return userViewMapper.toUserViewById(id);
-	}
+  @Named("idToUserView")
+  protected UserView idToUserView(ObjectId id) {
+    return userViewMapper.toUserViewById(id);
+  }
 }

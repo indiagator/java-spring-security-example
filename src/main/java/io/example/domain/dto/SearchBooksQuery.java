@@ -7,26 +7,27 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 public record SearchBooksQuery(
-	String id,
+  String id,
 
-	String creatorId,
-	LocalDateTime createdAtStart,
-	LocalDateTime createdAtEnd,
+  String creatorId,
+  LocalDateTime createdAtStart,
+  LocalDateTime createdAtEnd,
 
-	String title,
-	Set<String> genres,
-	String isbn13,
-	String isbn10,
-	String publisher,
-	LocalDate publishDateStart,
-	LocalDate publishDateEnd,
+  String title,
+  Set<String> genres,
+  String isbn13,
+  String isbn10,
+  String publisher,
+  LocalDate publishDateStart,
+  LocalDate publishDateEnd,
 
-	String authorId,
+  String authorId,
   String authorFullName
 ) {
 
-	@Builder
-  public SearchBooksQuery {}
+  @Builder
+  public SearchBooksQuery {
+  }
 
   public SearchBooksQuery() {
     this(null, null, null, null, null, null, null, null, null, null, null, null, null);

@@ -18,24 +18,24 @@ import java.util.Set;
 @Getter @Setter
 public class Author extends ComparableEntity {
 
-	@Id
-	private ObjectId id;
+  @Id
+  private ObjectId id;
 
-	@CreatedBy
-	private ObjectId creatorId;
-	@LastModifiedBy
-	private ObjectId modifierId;
+  @CreatedBy
+  private ObjectId creatorId;
+  @LastModifiedBy
+  private ObjectId modifierId;
 
-	@CreatedDate
-	private LocalDateTime createdAt;
-	@LastModifiedDate
-	private LocalDateTime modifiedAt;
+  @CreatedDate
+  private LocalDateTime createdAt;
+  @LastModifiedDate
+  private LocalDateTime modifiedAt;
 
-	private String fullName;
-	private String about;
-	private String nationality;
-	private Set<String> genres = new HashSet<>();
+  private String fullName;
+  private String about;
+  private String nationality;
+  private Set<String> genres = new HashSet<>();
 
-	private Set<ObjectId> bookIds = new HashSet<>();
+  private Set<ObjectId> bookIds = new HashSet<>();
 
 }

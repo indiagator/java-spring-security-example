@@ -6,16 +6,16 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public record EditAuthorRequest(
-		@NotNull String fullName,
-		String about,
-		String nationality,
-		List<String> genres) {
+  @NotNull String fullName,
+  String about,
+  String nationality,
+  List<String> genres) {
 
-	@Builder
-	public EditAuthorRequest {
-	}
+  @Builder
+  public EditAuthorRequest {
+  }
 
-	public EditAuthorRequest() {
-		this(null, null, null, null);
-	}
+  public EditAuthorRequest() {
+    this(null, null, null, null);
+  }
 }

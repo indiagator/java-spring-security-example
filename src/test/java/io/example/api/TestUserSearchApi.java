@@ -29,103 +29,103 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser(roles = Role.USER_ADMIN)
 public class TestUserSearchApi {
 
-	private final MockMvc mockMvc;
-	private final ObjectMapper objectMapper;
-	private final UserTestDataFactory userTestDataFactory;
+  private final MockMvc mockMvc;
+  private final ObjectMapper objectMapper;
+  private final UserTestDataFactory userTestDataFactory;
 
-	@Autowired
-	public TestUserSearchApi(MockMvc mockMvc, ObjectMapper objectMapper, UserTestDataFactory userTestDataFactory) {
-		this.mockMvc = mockMvc;
-		this.objectMapper = objectMapper;
-		this.userTestDataFactory = userTestDataFactory;
-	}
+  @Autowired
+  public TestUserSearchApi(MockMvc mockMvc, ObjectMapper objectMapper, UserTestDataFactory userTestDataFactory) {
+    this.mockMvc = mockMvc;
+    this.objectMapper = objectMapper;
+    this.userTestDataFactory = userTestDataFactory;
+  }
 
-	@Test
-	public void testSearch() throws Exception {
-		UserView user1 = userTestDataFactory.createUser(String.format("william.baker.%d@gmail.com", currentTimeMillis()),
-				"William Baker");
-		UserView user2 = userTestDataFactory.createUser(String.format("james.adams.%d@gmail.com", currentTimeMillis()),
-				"James Adams");
-		UserView user3 = userTestDataFactory.createUser(String.format("evelin.clarke.%d@nix.io", currentTimeMillis()),
-				"Evelyn Clarke");
-		UserView user4 = userTestDataFactory.createUser(String.format("ella.davidson.%d@nix.io", currentTimeMillis()),
-				"Ella Davidson");
-		UserView user5 = userTestDataFactory.createUser(String.format("evelin.bradley.%d@outlook.com", currentTimeMillis()),
-				"Evelyn Bradley");
+  @Test
+  public void testSearch() throws Exception {
+    UserView user1 = userTestDataFactory.createUser(String.format("william.baker.%d@gmail.com", currentTimeMillis()),
+      "William Baker");
+    UserView user2 = userTestDataFactory.createUser(String.format("james.adams.%d@gmail.com", currentTimeMillis()),
+      "James Adams");
+    UserView user3 = userTestDataFactory.createUser(String.format("evelin.clarke.%d@nix.io", currentTimeMillis()),
+      "Evelyn Clarke");
+    UserView user4 = userTestDataFactory.createUser(String.format("ella.davidson.%d@nix.io", currentTimeMillis()),
+      "Ella Davidson");
+    UserView user5 = userTestDataFactory.createUser(String.format("evelin.bradley.%d@outlook.com", currentTimeMillis()),
+      "Evelyn Bradley");
 
-		testIdFilter(user1.id());
-		testUsernameFilter();
-		testFullNameFilter();
+    testIdFilter(user1.id());
+    testUsernameFilter();
+    testFullNameFilter();
 
-		userTestDataFactory.deleteUser(user1.id());
-		userTestDataFactory.deleteUser(user2.id());
-		userTestDataFactory.deleteUser(user3.id());
-		userTestDataFactory.deleteUser(user4.id());
-		userTestDataFactory.deleteUser(user5.id());
-	}
+    userTestDataFactory.deleteUser(user1.id());
+    userTestDataFactory.deleteUser(user2.id());
+    userTestDataFactory.deleteUser(user3.id());
+    userTestDataFactory.deleteUser(user4.id());
+    userTestDataFactory.deleteUser(user5.id());
+  }
 
-	private void testIdFilter(String id) throws Exception {
-		SearchUsersQuery query;
-		ListResponse<UserView> userViewList;
+  private void testIdFilter(String id) throws Exception {
+    SearchUsersQuery query;
+    ListResponse<UserView> userViewList;
 
-		// Search query with book id equal
-		query = SearchUsersQuery.builder().id(id).build();
-		userViewList = execute("/api/admin/user/search", query);
-		assertEquals(1, userViewList.items().size(), "Invalid search result!");
-	}
+    // Search query with book id equal
+    query = SearchUsersQuery.builder().id(id).build();
+    userViewList = execute("/api/admin/user/search", query);
+    assertEquals(1, userViewList.items().size(), "Invalid search result!");
+  }
 
-	private void testUsernameFilter() throws Exception {
-		SearchUsersQuery query;
-		ListResponse<UserView> userViewList;
+  private void testUsernameFilter() throws Exception {
+    SearchUsersQuery query;
+    ListResponse<UserView> userViewList;
 
-		// Search query username starts with
-		query = SearchUsersQuery.builder().username("evelin").build();
-		userViewList = execute("/api/admin/user/search", query);
-		assertEquals(2, userViewList.items().size(), "Invalid search result!");
+    // Search query username starts with
+    query = SearchUsersQuery.builder().username("evelin").build();
+    userViewList = execute("/api/admin/user/search", query);
+    assertEquals(2, userViewList.items().size(), "Invalid search result!");
 
-		// Search query username contains
-		query = SearchUsersQuery.builder().username("gmail").build();
-		userViewList = execute("/api/admin/user/search", query);
-		assertEquals(2, userViewList.items().size(), "Invalid search result!");
+    // Search query username contains
+    query = SearchUsersQuery.builder().username("gmail").build();
+    userViewList = execute("/api/admin/user/search", query);
+    assertEquals(2, userViewList.items().size(), "Invalid search result!");
 
-		// Search query username case insensitive
-		query = SearchUsersQuery.builder().username("William").build();
-		userViewList = execute("/api/admin/user/search", query);
-		assertEquals(1, userViewList.items().size(), "Invalid search result!");
-	}
+    // Search query username case insensitive
+    query = SearchUsersQuery.builder().username("William").build();
+    userViewList = execute("/api/admin/user/search", query);
+    assertEquals(1, userViewList.items().size(), "Invalid search result!");
+  }
 
-	private void testFullNameFilter() throws Exception {
-		SearchUsersQuery query;
-		ListResponse<UserView> userViewList;
+  private void testFullNameFilter() throws Exception {
+    SearchUsersQuery query;
+    ListResponse<UserView> userViewList;
 
-		// Search query full name starts with
-		query = SearchUsersQuery.builder().username("William").build();
-		userViewList = execute("/api/admin/user/search", query);
-		assertEquals(1, userViewList.items().size(), "Invalid search result!");
+    // Search query full name starts with
+    query = SearchUsersQuery.builder().username("William").build();
+    userViewList = execute("/api/admin/user/search", query);
+    assertEquals(1, userViewList.items().size(), "Invalid search result!");
 
-		// Search query full name contains
-		query = SearchUsersQuery.builder().username("David").build();
-		userViewList = execute("/api/admin/user/search", query);
-		assertEquals(1, userViewList.items().size(), "Invalid search result!");
+    // Search query full name contains
+    query = SearchUsersQuery.builder().username("David").build();
+    userViewList = execute("/api/admin/user/search", query);
+    assertEquals(1, userViewList.items().size(), "Invalid search result!");
 
-		// Search query full name case insensitive
-		query = SearchUsersQuery.builder().username("CLARKE").build();
-		userViewList = execute("/api/admin/user/search", query);
-		assertEquals(1, userViewList.items().size(), "Invalid search result!");
-	}
+    // Search query full name case insensitive
+    query = SearchUsersQuery.builder().username("CLARKE").build();
+    userViewList = execute("/api/admin/user/search", query);
+    assertEquals(1, userViewList.items().size(), "Invalid search result!");
+  }
 
-	private ListResponse<UserView> execute(String url, SearchUsersQuery query) throws Exception {
-		MvcResult result = this.mockMvc
-				.perform(post(url)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(toJson(objectMapper, new SearchRequest<>(query))))
-				.andExpect(status().isOk())
-				.andReturn();
+  private ListResponse<UserView> execute(String url, SearchUsersQuery query) throws Exception {
+    MvcResult result = this.mockMvc
+      .perform(post(url)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(toJson(objectMapper, new SearchRequest<>(query))))
+      .andExpect(status().isOk())
+      .andReturn();
 
-		return fromJson(objectMapper,
-				result.getResponse().getContentAsString(),
-				new TypeReference<>() {
-				});
-	}
+    return fromJson(objectMapper,
+      result.getResponse().getContentAsString(),
+      new TypeReference<>() {
+      });
+  }
 
 }

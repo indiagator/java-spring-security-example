@@ -13,31 +13,31 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Service
 public class UserTestDataFactory {
 
-	@Autowired
-	private UserService userService;
+  @Autowired
+  private UserService userService;
 
-	public UserView createUser(String username,
-			String fullName,
-			String password) {
-		CreateUserRequest createRequest = new CreateUserRequest(
-			username, fullName, password, password
-		);
+  public UserView createUser(String username,
+                             String fullName,
+                             String password) {
+    CreateUserRequest createRequest = new CreateUserRequest(
+      username, fullName, password, password
+    );
 
-		UserView userView = userService.create(createRequest);
+    UserView userView = userService.create(createRequest);
 
-		assertNotNull(userView.id(), "User id must not be null!");
-		assertEquals(fullName, userView.fullName(), "User name update isn't applied!");
+    assertNotNull(userView.id(), "User id must not be null!");
+    assertEquals(fullName, userView.fullName(), "User name update isn't applied!");
 
-		return userView;
-	}
+    return userView;
+  }
 
-	public UserView createUser(String username,
-			String fullName) {
-		return createUser(username, fullName, "Test12345_");
-	}
+  public UserView createUser(String username,
+                             String fullName) {
+    return createUser(username, fullName, "Test12345_");
+  }
 
-	public void deleteUser(String id) {
-		userService.delete(new ObjectId(id));
-	}
+  public void deleteUser(String id) {
+    userService.delete(new ObjectId(id));
+  }
 
 }

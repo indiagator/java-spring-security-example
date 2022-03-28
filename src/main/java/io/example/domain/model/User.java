@@ -18,43 +18,43 @@ import java.util.Set;
 @Getter @Setter
 public class User extends ComparableEntity implements UserDetails {
 
-	@Id
-	private ObjectId id;
+  @Id
+  private ObjectId id;
 
-	@CreatedDate
-	private LocalDateTime createdAt;
-	@LastModifiedDate
-	private LocalDateTime modifiedAt;
+  @CreatedDate
+  private LocalDateTime createdAt;
+  @LastModifiedDate
+  private LocalDateTime modifiedAt;
 
-	private boolean enabled = true;
+  private boolean enabled = true;
 
-	@Indexed(unique = true)
-	private String username;
-	private String password;
-	@Indexed
-	private String fullName;
-	private Set<Role> authorities = new HashSet<>();
+  @Indexed(unique = true)
+  private String username;
+  private String password;
+  @Indexed
+  private String fullName;
+  private Set<Role> authorities = new HashSet<>();
 
-	public User() {
-	}
+  public User() {
+  }
 
-	public User(String username, String password) {
-		this.username = username;
-		this.password = password;
-	}
+  public User(String username, String password) {
+    this.username = username;
+    this.password = password;
+  }
 
-	@Override
-	public boolean isAccountNonExpired() {
-		return enabled;
-	}
+  @Override
+  public boolean isAccountNonExpired() {
+    return enabled;
+  }
 
-	@Override
-	public boolean isAccountNonLocked() {
-		return enabled;
-	}
+  @Override
+  public boolean isAccountNonLocked() {
+    return enabled;
+  }
 
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return enabled;
-	}
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return enabled;
+  }
 }

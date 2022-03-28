@@ -36,47 +36,47 @@ import static java.util.stream.Collectors.joining;
 @RequiredArgsConstructor
 public class AuthApi {
 
-	private final AuthenticationManager authenticationManager;
-	private final JwtEncoder jwtEncoder;
-	private final UserViewMapper userViewMapper;
-	private final UserService userService;
+  private final AuthenticationManager authenticationManager;
+  private final JwtEncoder jwtEncoder;
+  private final UserViewMapper userViewMapper;
+  private final UserService userService;
 
-	@PostMapping("login")
-	public ResponseEntity<UserView> login(@RequestBody @Valid AuthRequest request) {
-		try {
-			Authentication authentication = authenticationManager
-					.authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.password()));
+  @PostMapping("login")
+  public ResponseEntity<UserView> login(@RequestBody @Valid AuthRequest request) {
+    try {
+      Authentication authentication = authenticationManager
+        .authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.password()));
 
-			User user = (User) authentication.getPrincipal();
+      User user = (User) authentication.getPrincipal();
 
-			Instant now = Instant.now();
-			long expiry = 36000L;
+      Instant now = Instant.now();
+      long expiry = 36000L;
 
-			String scope = authentication.getAuthorities().stream()
-					.map(GrantedAuthority::getAuthority)
-					.collect(joining(" "));
+      String scope = authentication.getAuthorities().stream()
+        .map(GrantedAuthority::getAuthority)
+        .collect(joining(" "));
 
-			JwtClaimsSet claims = JwtClaimsSet.builder()
-					.issuer("example.io")
-					.issuedAt(now)
-					.expiresAt(now.plusSeconds(expiry))
-					.subject(format("%s,%s", user.getId(), user.getUsername()))
-					.claim("roles", scope)
-					.build();
+      JwtClaimsSet claims = JwtClaimsSet.builder()
+        .issuer("example.io")
+        .issuedAt(now)
+        .expiresAt(now.plusSeconds(expiry))
+        .subject(format("%s,%s", user.getId(), user.getUsername()))
+        .claim("roles", scope)
+        .build();
 
-			String token = this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+      String token = this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
-			return ResponseEntity.ok()
-					.header(HttpHeaders.AUTHORIZATION, token)
-					.body(userViewMapper.toUserView(user));
-		} catch (BadCredentialsException ex) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
-	}
+      return ResponseEntity.ok()
+        .header(HttpHeaders.AUTHORIZATION, token)
+        .body(userViewMapper.toUserView(user));
+    } catch (BadCredentialsException ex) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+  }
 
-	@PostMapping("register")
-	public UserView register(@RequestBody @Valid CreateUserRequest request) {
-		return userService.create(request);
-	}
+  @PostMapping("register")
+  public UserView register(@RequestBody @Valid CreateUserRequest request) {
+    return userService.create(request);
+  }
 
 }

@@ -6,21 +6,22 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 public record SearchAuthorsQuery(
-	String id,
+  String id,
 
-	String creatorId,
-	LocalDateTime createdAtStart,
-	LocalDateTime createdAtEnd,
+  String creatorId,
+  LocalDateTime createdAtStart,
+  LocalDateTime createdAtEnd,
 
-	String fullName,
-	Set<String> genres,
+  String fullName,
+  Set<String> genres,
 
-	String bookId,
-	String bookTitle
+  String bookId,
+  String bookTitle
 ) {
 
-	@Builder
-  public SearchAuthorsQuery {}
+  @Builder
+  public SearchAuthorsQuery {
+  }
 
   public SearchAuthorsQuery() {
     this(null, null, null, null, null, null, null, null);

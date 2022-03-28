@@ -16,110 +16,110 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Service
 public class BookTestDataFactory {
 
-	@Autowired
-	private BookService bookService;
+  @Autowired
+  private BookService bookService;
 
-	public BookView createBook(List<String> authorIds,
-			String title,
-			String about,
-			String language,
-			List<String> genres,
-			String isbn13,
-			String isbn10,
-			String publisher,
-			LocalDate publishDate,
-			Integer hardcover) {
-		EditBookRequest createRequest = new EditBookRequest(
-			authorIds,
-			title,
-			about,
-			language,
-			genres,
-			isbn13,
-			isbn10,
-			publisher,
-			publishDate,
-			hardcover
-		);
+  public BookView createBook(List<String> authorIds,
+                             String title,
+                             String about,
+                             String language,
+                             List<String> genres,
+                             String isbn13,
+                             String isbn10,
+                             String publisher,
+                             LocalDate publishDate,
+                             Integer hardcover) {
+    EditBookRequest createRequest = new EditBookRequest(
+      authorIds,
+      title,
+      about,
+      language,
+      genres,
+      isbn13,
+      isbn10,
+      publisher,
+      publishDate,
+      hardcover
+    );
 
-		BookView bookView = bookService.create(createRequest);
+    BookView bookView = bookService.create(createRequest);
 
-		assertNotNull(bookView.id(), "Book id must not be null!");
-		assertEquals(title, bookView.title(), "Book title update isn't applied!");
+    assertNotNull(bookView.id(), "Book id must not be null!");
+    assertEquals(title, bookView.title(), "Book title update isn't applied!");
 
-		return bookView;
-	}
+    return bookView;
+  }
 
-	public BookView createBook(List<String> authorIds,
-			String title,
-			String about,
-			String language,
-			List<String> genres,
-			String isbn13,
-			String isbn10,
-			String publisher,
-			LocalDate publishDate) {
-		return createBook(authorIds, title, about, language, genres, isbn13, isbn10, publisher, publishDate, null);
-	}
+  public BookView createBook(List<String> authorIds,
+                             String title,
+                             String about,
+                             String language,
+                             List<String> genres,
+                             String isbn13,
+                             String isbn10,
+                             String publisher,
+                             LocalDate publishDate) {
+    return createBook(authorIds, title, about, language, genres, isbn13, isbn10, publisher, publishDate, null);
+  }
 
-	public BookView createBook(List<String> authorIds,
-			String title,
-			String about,
-			String language,
-			List<String> genres,
-			String isbn13,
-			String isbn10,
-			String publisher) {
-		return createBook(authorIds, title, about, language, genres, isbn13, isbn10, publisher, null, null);
-	}
+  public BookView createBook(List<String> authorIds,
+                             String title,
+                             String about,
+                             String language,
+                             List<String> genres,
+                             String isbn13,
+                             String isbn10,
+                             String publisher) {
+    return createBook(authorIds, title, about, language, genres, isbn13, isbn10, publisher, null, null);
+  }
 
-	public BookView createBook(List<String> authorIds,
-			String title,
-			String about,
-			String language,
-			List<String> genres,
-			String isbn13,
-			String isbn10) {
-		return createBook(authorIds, title, about, language, genres, isbn13, isbn10, null, null, null);
-	}
+  public BookView createBook(List<String> authorIds,
+                             String title,
+                             String about,
+                             String language,
+                             List<String> genres,
+                             String isbn13,
+                             String isbn10) {
+    return createBook(authorIds, title, about, language, genres, isbn13, isbn10, null, null, null);
+  }
 
-	public BookView createBook(List<String> authorIds,
-			String title,
-			String about,
-			String language,
-			List<String> genres,
-			String isbn13) {
-		return createBook(authorIds, title, about, language, genres, isbn13, null, null, null, null);
-	}
+  public BookView createBook(List<String> authorIds,
+                             String title,
+                             String about,
+                             String language,
+                             List<String> genres,
+                             String isbn13) {
+    return createBook(authorIds, title, about, language, genres, isbn13, null, null, null, null);
+  }
 
-	public BookView createBook(List<String> authorIds,
-			String title,
-			String about,
-			String language,
-			List<String> genres) {
-		return createBook(authorIds, title, about, language, genres, null, null, null, null, null);
-	}
+  public BookView createBook(List<String> authorIds,
+                             String title,
+                             String about,
+                             String language,
+                             List<String> genres) {
+    return createBook(authorIds, title, about, language, genres, null, null, null, null, null);
+  }
 
-	public BookView createBook(List<String> authorIds,
-			String title,
-			String about,
-			String language) {
-		return createBook(authorIds, title, about, language, null, null, null, null, null, null);
-	}
+  public BookView createBook(List<String> authorIds,
+                             String title,
+                             String about,
+                             String language) {
+    return createBook(authorIds, title, about, language, null, null, null, null, null, null);
+  }
 
-	public BookView createBook(List<String> authorIds,
-			String title,
-			String about) {
-		return createBook(authorIds, title, about, null, null, null, null, null, null, null);
-	}
+  public BookView createBook(List<String> authorIds,
+                             String title,
+                             String about) {
+    return createBook(authorIds, title, about, null, null, null, null, null, null, null);
+  }
 
-	public BookView createBook(List<String> authorIds,
-			String title) {
-		return createBook(authorIds, title, null, null, null, null, null, null, null, null);
-	}
+  public BookView createBook(List<String> authorIds,
+                             String title) {
+    return createBook(authorIds, title, null, null, null, null, null, null, null, null);
+  }
 
-	public void deleteBook(String id) {
-		bookService.delete(new ObjectId(id));
-	}
+  public void deleteBook(String id) {
+    bookService.delete(new ObjectId(id));
+  }
 
 }

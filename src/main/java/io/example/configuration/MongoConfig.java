@@ -15,16 +15,16 @@ import static java.util.Optional.ofNullable;
 @EnableMongoAuditing
 public class MongoConfig {
 
-	@Bean
-	public AuditorAware<ObjectId> auditorProvider() {
-		return () -> {
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			User user = null;
-			if (authentication != null && authentication.getPrincipal() instanceof User) {
-				user = (User) authentication.getPrincipal();
-			}
-			return ofNullable(user).map(User::getId);
-		};
-	}
+  @Bean
+  public AuditorAware<ObjectId> auditorProvider() {
+    return () -> {
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      User user = null;
+      if (authentication != null && authentication.getPrincipal() instanceof User) {
+        user = (User) authentication.getPrincipal();
+      }
+      return ofNullable(user).map(User::getId);
+    };
+  }
 
 }

@@ -20,19 +20,19 @@ import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 @Mapper(componentModel = "spring", uses = ObjectIdMapper.class)
 public abstract class UserEditMapper {
 
-	@Mapping(source = "authorities", target = "authorities", qualifiedByName = "stringToRole")
-	public abstract User create(CreateUserRequest request);
+  @Mapping(source = "authorities", target = "authorities", qualifiedByName = "stringToRole")
+  public abstract User create(CreateUserRequest request);
 
-	@BeanMapping(nullValueCheckStrategy = ALWAYS, nullValuePropertyMappingStrategy = IGNORE)
-	@Mapping(source = "authorities", target = "authorities", qualifiedByName = "stringToRole")
-	public abstract void update(UpdateUserRequest request, @MappingTarget User user);
+  @BeanMapping(nullValueCheckStrategy = ALWAYS, nullValuePropertyMappingStrategy = IGNORE)
+  @Mapping(source = "authorities", target = "authorities", qualifiedByName = "stringToRole")
+  public abstract void update(UpdateUserRequest request, @MappingTarget User user);
 
-	@Named("stringToRole")
-	protected Set<Role> stringToRole(Set<String> authorities) {
-		if (authorities != null) {
-			return authorities.stream().map(Role::new).collect(toSet());
-		}
-		return new HashSet<>();
-	}
+  @Named("stringToRole")
+  protected Set<Role> stringToRole(Set<String> authorities) {
+    if (authorities != null) {
+      return authorities.stream().map(Role::new).collect(toSet());
+    }
+    return new HashSet<>();
+  }
 
 }

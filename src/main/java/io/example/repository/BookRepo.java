@@ -31,90 +31,90 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.unwi
 @Repository
 public interface BookRepo extends MongoRepository<Book, ObjectId>, BookRepoCustom {
 
-	default Book getById(ObjectId id) {
-		return findById(id).orElseThrow(() -> new NotFoundException(Book.class, id));
-	}
+  default Book getById(ObjectId id) {
+    return findById(id).orElseThrow(() -> new NotFoundException(Book.class, id));
+  }
 
-	List<Book> findAllById(Iterable<ObjectId> ids);
+  List<Book> findAllById(Iterable<ObjectId> ids);
 
 }
 
 interface BookRepoCustom {
 
-	List<Book> searchBooks(Page page, SearchBooksQuery query);
+  List<Book> searchBooks(Page page, SearchBooksQuery query);
 
 }
 
 @RequiredArgsConstructor
 class BookRepoCustomImpl implements BookRepoCustom {
 
-	private final MongoTemplate mongoTemplate;
+  private final MongoTemplate mongoTemplate;
 
-	@Override
-	public List<Book> searchBooks(Page page, SearchBooksQuery query) {
-		List<AggregationOperation> operations = new ArrayList<>();
+  @Override
+  public List<Book> searchBooks(Page page, SearchBooksQuery query) {
+    List<AggregationOperation> operations = new ArrayList<>();
 
-		List<Criteria> criteriaList = new ArrayList<>();
-		if (StringUtils.hasText(query.id())) {
-			criteriaList.add(Criteria.where("id").is(new ObjectId(query.id())));
-		}
-		if (StringUtils.hasText(query.creatorId())) {
-			criteriaList.add(Criteria.where("creatorId").is(new ObjectId(query.creatorId())));
-		}
-		if (query.createdAtStart() != null) {
-			criteriaList.add(Criteria.where("createdAt").gte(query.createdAtStart()));
-		}
-		if (query.createdAtEnd() != null) {
-			criteriaList.add(Criteria.where("createdAt").lt(query.createdAtEnd()));
-		}
-		if (StringUtils.hasText(query.title())) {
-			criteriaList.add(Criteria.where("title").regex(query.title(), "i"));
-		}
-		if (!CollectionUtils.isEmpty(query.genres())) {
-			criteriaList.add(Criteria.where("genres").all(query.genres()));
-		}
-		if (StringUtils.hasText(query.isbn13())) {
-			criteriaList.add(Criteria.where("isbn13").is(query.isbn13()));
-		}
-		if (StringUtils.hasText(query.isbn10())) {
-			criteriaList.add(Criteria.where("isbn10").is(query.isbn10()));
-		}
-		if (StringUtils.hasText(query.publisher())) {
-			criteriaList.add(Criteria.where("publisher").regex(query.publisher(), "i"));
-		}
-		if (query.publishDateStart() != null) {
-			criteriaList.add(Criteria.where("publishDate").gte(query.publishDateStart()));
-		}
-		if (query.publishDateEnd() != null) {
-			criteriaList.add(Criteria.where("publishDate").lt(query.publishDateEnd()));
-		}
-		if (!criteriaList.isEmpty()) {
-			Criteria bookCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
-			operations.add(match(bookCriteria));
-		}
+    List<Criteria> criteriaList = new ArrayList<>();
+    if (StringUtils.hasText(query.id())) {
+      criteriaList.add(Criteria.where("id").is(new ObjectId(query.id())));
+    }
+    if (StringUtils.hasText(query.creatorId())) {
+      criteriaList.add(Criteria.where("creatorId").is(new ObjectId(query.creatorId())));
+    }
+    if (query.createdAtStart() != null) {
+      criteriaList.add(Criteria.where("createdAt").gte(query.createdAtStart()));
+    }
+    if (query.createdAtEnd() != null) {
+      criteriaList.add(Criteria.where("createdAt").lt(query.createdAtEnd()));
+    }
+    if (StringUtils.hasText(query.title())) {
+      criteriaList.add(Criteria.where("title").regex(query.title(), "i"));
+    }
+    if (!CollectionUtils.isEmpty(query.genres())) {
+      criteriaList.add(Criteria.where("genres").all(query.genres()));
+    }
+    if (StringUtils.hasText(query.isbn13())) {
+      criteriaList.add(Criteria.where("isbn13").is(query.isbn13()));
+    }
+    if (StringUtils.hasText(query.isbn10())) {
+      criteriaList.add(Criteria.where("isbn10").is(query.isbn10()));
+    }
+    if (StringUtils.hasText(query.publisher())) {
+      criteriaList.add(Criteria.where("publisher").regex(query.publisher(), "i"));
+    }
+    if (query.publishDateStart() != null) {
+      criteriaList.add(Criteria.where("publishDate").gte(query.publishDateStart()));
+    }
+    if (query.publishDateEnd() != null) {
+      criteriaList.add(Criteria.where("publishDate").lt(query.publishDateEnd()));
+    }
+    if (!criteriaList.isEmpty()) {
+      Criteria bookCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
+      operations.add(match(bookCriteria));
+    }
 
-		criteriaList = new ArrayList<>();
-		if (StringUtils.hasText(query.authorId())) {
-			criteriaList.add(Criteria.where("author._id").is(new ObjectId(query.authorId())));
-		}
-		if (StringUtils.hasText(query.authorFullName())) {
-			criteriaList.add(Criteria.where("author.fullName").regex(query.authorFullName(), "i"));
-		}
-		if (!criteriaList.isEmpty()) {
-			Criteria authorCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
-			operations.add(lookup("authors", "authorIds", "_id", "author"));
-			operations.add(unwind("author", false));
-			operations.add(match(authorCriteria));
-		}
+    criteriaList = new ArrayList<>();
+    if (StringUtils.hasText(query.authorId())) {
+      criteriaList.add(Criteria.where("author._id").is(new ObjectId(query.authorId())));
+    }
+    if (StringUtils.hasText(query.authorFullName())) {
+      criteriaList.add(Criteria.where("author.fullName").regex(query.authorFullName(), "i"));
+    }
+    if (!criteriaList.isEmpty()) {
+      Criteria authorCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
+      operations.add(lookup("authors", "authorIds", "_id", "author"));
+      operations.add(unwind("author", false));
+      operations.add(match(authorCriteria));
+    }
 
-		operations.add(sort(Sort.Direction.DESC, "createdAt"));
-		operations.add(skip((page.number() - 1) * page.limit()));
-		operations.add(limit(page.limit()));
+    operations.add(sort(Sort.Direction.DESC, "createdAt"));
+    operations.add(skip((page.number() - 1) * page.limit()));
+    operations.add(limit(page.limit()));
 
-		TypedAggregation<Book> aggregation = newAggregation(Book.class, operations);
-		System.out.println(aggregation.toString());
-		AggregationResults<Book> results = mongoTemplate.aggregate(aggregation, Book.class);
-		return results.getMappedResults();
-	}
+    TypedAggregation<Book> aggregation = newAggregation(Book.class, operations);
+    System.out.println(aggregation.toString());
+    AggregationResults<Book> results = mongoTemplate.aggregate(aggregation, Book.class);
+    return results.getMappedResults();
+  }
 
 }
