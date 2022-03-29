@@ -1,6 +1,7 @@
 {
 	"editor.tabSize": 2,
-	"editor.insertSpaces": true,
-	"editor.detectIndentation": false,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": true,
+  "editor.trimAutoWhitespace": true,
 	"java.configuration.updateBuildConfiguration": "automatic"
 }
