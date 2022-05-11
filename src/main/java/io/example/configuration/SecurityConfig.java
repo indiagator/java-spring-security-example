@@ -102,6 +102,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .jwt();
   }
 
+  // Used by JwtAuthenticationProvider to generate JWT tokens
   @Bean
   public JwtEncoder jwtEncoder() {
     JWK jwk = new RSAKey.Builder(this.rsaPublicKey).privateKey(this.rsaPrivateKey).build();
@@ -109,6 +110,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return new NimbusJwtEncoder(jwks);
   }
 
+  // Used by JwtAuthenticationProvider to decode and validate JWT tokens
   @Bean
   public JwtDecoder jwtDecoder() {
     return NimbusJwtDecoder.withPublicKey(this.rsaPublicKey).build();

@@ -101,13 +101,6 @@
 			<version>2.3.1</version>
 		</dependency>
 
-		<!-- JWT library for authentication -->
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>0.9.1</version>
-		</dependency>
-
 		<!-- Swagger for rest documentation -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
