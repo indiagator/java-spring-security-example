@@ -1,12 +1,13 @@
 package io.example.configuration;
 
-import com.nimbusds.jose.jwk.JWK;
+import static java.lang.String.format;
+
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.SecurityContext;
 import io.example.repository.UserRepo;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -34,11 +35,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-
-import static java.lang.String.format;
-
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 @RequiredArgsConstructor
@@ -48,21 +44,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Value("${jwt.public.key}")
   private RSAPublicKey rsaPublicKey;
+
   @Value("${jwt.private.key}")
   private RSAPrivateKey rsaPrivateKey;
 
   @Value("${springdoc.api-docs.path}")
   private String restApiDocPath;
+
   @Value("${springdoc.swagger-ui.path}")
   private String swaggerPath;
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(username -> userRepo
-      .findByUsername(username)
-      .orElseThrow(
-        () -> new UsernameNotFoundException(
-          format("User: %s, not found", username))));
+    auth.userDetailsService(
+        username ->
+            userRepo
+                .findByUsername(username)
+                .orElseThrow(
+                    () -> new UsernameNotFoundException(format("User: %s, not found", username))));
   }
 
   @Override
@@ -71,42 +70,51 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     http = http.cors().and().csrf().disable();
 
     // Set session management to stateless
-    http = http
-      .sessionManagement()
-      .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-      .and();
+    http = http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
 
     // Set unauthorized requests exception handler
-    http = http
-      .exceptionHandling((exceptions) -> exceptions
-        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
+    http =
+        http.exceptionHandling(
+            (exceptions) ->
+                exceptions
+                    .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                    .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
 
     // Set permissions on endpoints
     http.authorizeRequests()
-      // Swagger endpoints must be publicly accessible
-      .antMatchers("/").permitAll()
-      .antMatchers(format("%s/**", restApiDocPath)).permitAll()
-      .antMatchers(format("%s/**", swaggerPath)).permitAll()
-      // Our public endpoints
-      .antMatchers("/api/public/**").permitAll()
-      .antMatchers(HttpMethod.GET, "/api/author/**").permitAll()
-      .antMatchers(HttpMethod.POST, "/api/author/search").permitAll()
-      .antMatchers(HttpMethod.GET, "/api/book/**").permitAll()
-      .antMatchers(HttpMethod.POST, "/api/book/search").permitAll()
-      // Our private endpoints
-      .anyRequest().authenticated()
-      // Set up oauth2 resource server
-      .and().httpBasic(Customizer.withDefaults())
-      .oauth2ResourceServer()
-      .jwt();
+        // Swagger endpoints must be publicly accessible
+        .antMatchers("/")
+        .permitAll()
+        .antMatchers(format("%s/**", restApiDocPath))
+        .permitAll()
+        .antMatchers(format("%s/**", swaggerPath))
+        .permitAll()
+        // Our public endpoints
+        .antMatchers("/api/public/**")
+        .permitAll()
+        .antMatchers(HttpMethod.GET, "/api/author/**")
+        .permitAll()
+        .antMatchers(HttpMethod.POST, "/api/author/search")
+        .permitAll()
+        .antMatchers(HttpMethod.GET, "/api/book/**")
+        .permitAll()
+        .antMatchers(HttpMethod.POST, "/api/book/search")
+        .permitAll()
+        // Our private endpoints
+        .anyRequest()
+        .authenticated()
+        // Set up oauth2 resource server
+        .and()
+        .httpBasic(Customizer.withDefaults())
+        .oauth2ResourceServer()
+        .jwt();
   }
 
   // Used by JwtAuthenticationProvider to generate JWT tokens
   @Bean
   public JwtEncoder jwtEncoder() {
-    JWK jwk = new RSAKey.Builder(this.rsaPublicKey).privateKey(this.rsaPrivateKey).build();
-    JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+    var jwk = new RSAKey.Builder(this.rsaPublicKey).privateKey(this.rsaPrivateKey).build();
+    var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
     return new NimbusJwtEncoder(jwks);
   }
 
@@ -119,11 +127,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   // Extract authorities from the roles claim
   @Bean
   public JwtAuthenticationConverter jwtAuthenticationConverter() {
-    JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+    var jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
     jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
     jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
 
-    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+    var jwtAuthenticationConverter = new JwtAuthenticationConverter();
     jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
     return jwtAuthenticationConverter;
   }
@@ -137,8 +145,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   // Used by spring security if CORS is enabled.
   @Bean
   public CorsFilter corsFilter() {
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    CorsConfiguration config = new CorsConfiguration();
+    var source = new UrlBasedCorsConfigurationSource();
+    var config = new CorsConfiguration();
     config.setAllowCredentials(true);
     config.addAllowedOrigin("*");
     config.addAllowedHeader("*");

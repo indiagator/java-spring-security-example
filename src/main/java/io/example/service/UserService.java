@@ -1,5 +1,7 @@
 package io.example.service;
 
+import static java.lang.String.format;
+
 import io.example.domain.dto.CreateUserRequest;
 import io.example.domain.dto.Page;
 import io.example.domain.dto.SearchUsersQuery;
@@ -9,6 +11,8 @@ import io.example.domain.mapper.UserEditMapper;
 import io.example.domain.mapper.UserViewMapper;
 import io.example.domain.model.User;
 import io.example.repository.UserRepo;
+import java.util.List;
+import javax.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,12 +21,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
-import java.util.List;
-import java.util.Optional;
-
-import static java.lang.String.format;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +40,7 @@ public class UserService implements UserDetailsService {
       throw new ValidationException("Passwords don't match!");
     }
 
-    User user = userEditMapper.create(request);
+    var user = userEditMapper.create(request);
     user.setPassword(passwordEncoder.encode(request.password()));
 
     user = userRepo.save(user);
@@ -52,7 +50,7 @@ public class UserService implements UserDetailsService {
 
   @Transactional
   public UserView update(ObjectId id, UpdateUserRequest request) {
-    User user = userRepo.getById(id);
+    var user = userRepo.getById(id);
     userEditMapper.update(request, user);
 
     user = userRepo.save(user);
@@ -62,23 +60,23 @@ public class UserService implements UserDetailsService {
 
   @Transactional
   public UserView upsert(CreateUserRequest request) {
-    Optional<User> optionalUser = userRepo.findByUsername(request.username());
+    var optionalUser = userRepo.findByUsername(request.username());
 
     if (optionalUser.isEmpty()) {
       return create(request);
     } else {
-      UpdateUserRequest updateUserRequest = new UpdateUserRequest(
-        request.fullName(), request.authorities()
-      );
+      UpdateUserRequest updateUserRequest =
+          new UpdateUserRequest(request.fullName(), request.authorities());
       return update(optionalUser.get().getId(), updateUserRequest);
     }
   }
 
   @Transactional
   public UserView delete(ObjectId id) {
-    User user = userRepo.getById(id);
+    var user = userRepo.getById(id);
 
-    user.setUsername(user.getUsername().replace("@", String.format("_%s@", user.getId().toString())));
+    user.setUsername(
+        user.getUsername().replace("@", String.format("_%s@", user.getId().toString())));
     user.setEnabled(false);
     user = userRepo.save(user);
 
@@ -87,9 +85,11 @@ public class UserService implements UserDetailsService {
 
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     return userRepo
-      .findByUsername(username)
-      .orElseThrow(
-        () -> new UsernameNotFoundException(format("User with username - %s, not found", username)));
+        .findByUsername(username)
+        .orElseThrow(
+            () ->
+                new UsernameNotFoundException(
+                    format("User with username - %s, not found", username)));
   }
 
   public boolean usernameExists(String username) {
@@ -104,5 +104,4 @@ public class UserService implements UserDetailsService {
     List<User> users = userRepo.searchUsers(page, query);
     return userViewMapper.toUserView(users);
   }
-
 }

@@ -1,25 +1,5 @@
 package io.example.repository;
 
-import io.example.domain.dto.Page;
-import io.example.domain.dto.SearchBooksQuery;
-import io.example.domain.exception.NotFoundException;
-import io.example.domain.model.Book;
-import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.limit;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.lookup;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
@@ -27,6 +7,23 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.newA
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.skip;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.unwind;
+
+import io.example.domain.dto.Page;
+import io.example.domain.dto.SearchBooksQuery;
+import io.example.domain.exception.NotFoundException;
+import io.example.domain.model.Book;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @Repository
 public interface BookRepo extends MongoRepository<Book, ObjectId>, BookRepoCustom {
@@ -36,13 +33,11 @@ public interface BookRepo extends MongoRepository<Book, ObjectId>, BookRepoCusto
   }
 
   List<Book> findAllById(Iterable<ObjectId> ids);
-
 }
 
 interface BookRepoCustom {
 
   List<Book> searchBooks(Page page, SearchBooksQuery query);
-
 }
 
 @RequiredArgsConstructor
@@ -52,9 +47,9 @@ class BookRepoCustomImpl implements BookRepoCustom {
 
   @Override
   public List<Book> searchBooks(Page page, SearchBooksQuery query) {
-    List<AggregationOperation> operations = new ArrayList<>();
+    var operations = new ArrayList<AggregationOperation>();
 
-    List<Criteria> criteriaList = new ArrayList<>();
+    var criteriaList = new ArrayList<Criteria>();
     if (StringUtils.hasText(query.id())) {
       criteriaList.add(Criteria.where("id").is(new ObjectId(query.id())));
     }
@@ -89,11 +84,11 @@ class BookRepoCustomImpl implements BookRepoCustom {
       criteriaList.add(Criteria.where("publishDate").lt(query.publishDateEnd()));
     }
     if (!criteriaList.isEmpty()) {
-      Criteria bookCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
+      var bookCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
       operations.add(match(bookCriteria));
     }
 
-    criteriaList = new ArrayList<>();
+    criteriaList = new ArrayList<Criteria>();
     if (StringUtils.hasText(query.authorId())) {
       criteriaList.add(Criteria.where("author._id").is(new ObjectId(query.authorId())));
     }
@@ -101,7 +96,7 @@ class BookRepoCustomImpl implements BookRepoCustom {
       criteriaList.add(Criteria.where("author.fullName").regex(query.authorFullName(), "i"));
     }
     if (!criteriaList.isEmpty()) {
-      Criteria authorCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
+      var authorCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
       operations.add(lookup("authors", "authorIds", "_id", "author"));
       operations.add(unwind("author", false));
       operations.add(match(authorCriteria));
@@ -111,10 +106,8 @@ class BookRepoCustomImpl implements BookRepoCustom {
     operations.add(skip((page.number() - 1) * page.limit()));
     operations.add(limit(page.limit()));
 
-    TypedAggregation<Book> aggregation = newAggregation(Book.class, operations);
-    System.out.println(aggregation.toString());
-    AggregationResults<Book> results = mongoTemplate.aggregate(aggregation, Book.class);
+    var aggregation = newAggregation(Book.class, operations);
+    var results = mongoTemplate.aggregate(aggregation, Book.class);
     return results.getMappedResults();
   }
-
 }
