@@ -5,7 +5,6 @@ import static java.lang.String.format;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import io.example.repository.UserRepo;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +13,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -31,6 +29,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -38,9 +37,9 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 @RequiredArgsConstructor
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
-  private final UserRepo userRepo;
+  // private final UserRepo userRepo;
 
   @Value("${jwt.public.key}")
   private RSAPublicKey rsaPublicKey;
@@ -54,31 +53,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Value("${springdoc.swagger-ui.path}")
   private String swaggerPath;
 
-  @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(
-        username ->
-            userRepo
-                .findByUsername(username)
-                .orElseThrow(
-                    () -> new UsernameNotFoundException(format("User: %s, not found", username))));
-  }
-
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  @Bean
+  protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
     // Enable CORS and disable CSRF
-    http = http.cors().and().csrf().disable();
+    http.cors().and().csrf().disable();
 
     // Set session management to stateless
-    http = http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
+    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
     // Set unauthorized requests exception handler
-    http =
-        http.exceptionHandling(
-            (exceptions) ->
-                exceptions
-                    .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                    .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
+    http.exceptionHandling(
+        (exceptions) ->
+            exceptions
+                .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
 
     // Set permissions on endpoints
     http.authorizeRequests()
@@ -106,8 +94,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Set up oauth2 resource server
         .and()
         .httpBasic(Customizer.withDefaults())
-        .oauth2ResourceServer()
-        .jwt();
+        .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+
+    return http.build();
   }
 
   // Used by JwtAuthenticationProvider to generate JWT tokens
@@ -156,9 +145,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   // Expose authentication manager bean
-  @Override
   @Bean
-  public AuthenticationManager authenticationManagerBean() throws Exception {
-    return super.authenticationManagerBean();
+  public AuthenticationManager authenticationManager(
+      AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    return authenticationConfiguration.getAuthenticationManager();
   }
 }
