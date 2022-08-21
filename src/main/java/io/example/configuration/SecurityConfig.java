@@ -5,6 +5,7 @@ import static java.lang.String.format;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import io.example.repository.UserRepo;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +14,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -39,7 +42,7 @@ import org.springframework.web.filter.CorsFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  // private final UserRepo userRepo;
+  private final UserRepo userRepo;
 
   @Value("${jwt.public.key}")
   private RSAPublicKey rsaPublicKey;
@@ -54,7 +57,23 @@ public class SecurityConfig {
   private String swaggerPath;
 
   @Bean
-  protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
+  public AuthenticationManager authenticationManager(
+      HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder) throws Exception {
+    return http.getSharedObject(AuthenticationManagerBuilder.class)
+        .userDetailsService(
+            username ->
+                userRepo
+                    .findByUsername(username)
+                    .orElseThrow(
+                        () ->
+                            new UsernameNotFoundException(format("User: %s, not found", username))))
+        .passwordEncoder(bCryptPasswordEncoder)
+        .and()
+        .build();
+  }
+
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     // Enable CORS and disable CSRF
     http.cors().and().csrf().disable();
 
