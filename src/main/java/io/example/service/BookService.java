@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BookService {
 
