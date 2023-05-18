@@ -40,6 +40,7 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 @RequiredArgsConstructor
+@Configuration
 public class SecurityConfig {
 
   private final UserRepo userRepo;
