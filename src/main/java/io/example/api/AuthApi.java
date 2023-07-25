@@ -11,7 +11,7 @@ import io.example.domain.model.User;
 import io.example.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.Instant;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

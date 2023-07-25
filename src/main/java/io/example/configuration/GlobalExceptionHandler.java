@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ValidationException;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ValidationException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,7 +31,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(NotFoundException.class)
   public ResponseEntity<ApiCallError<String>> handleNotFoundException(
-      HttpServletRequest request, NotFoundException ex) {
+    HttpServletRequest request, NotFoundException ex) {
     logger.error("NotFoundException {}\n", request.getRequestURI(), ex);
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND)

@@ -4,11 +4,7 @@ import io.example.domain.dto.CreateUserRequest;
 import io.example.domain.dto.UpdateUserRequest;
 import io.example.domain.model.Role;
 import io.example.domain.model.User;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +13,7 @@ import static java.util.stream.Collectors.toSet;
 import static org.mapstruct.NullValueCheckStrategy.ALWAYS;
 import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 
-@Mapper(componentModel = "spring", uses = ObjectIdMapper.class)
+@Mapper(componentModel = "spring", uses = ObjectIdMapper.class, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public abstract class UserEditMapper {
 
   @Mapping(source = "authorities", target = "authorities", qualifiedByName = "stringToRole")

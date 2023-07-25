@@ -1,31 +1,23 @@
 package io.example.service;
 
-import static java.lang.String.format;
-
-import io.example.domain.dto.CreateUserRequest;
-import io.example.domain.dto.Page;
-import io.example.domain.dto.SearchUsersQuery;
-import io.example.domain.dto.UpdateUserRequest;
-import io.example.domain.dto.UserView;
+import io.example.domain.dto.*;
 import io.example.domain.mapper.UserEditMapper;
 import io.example.domain.mapper.UserViewMapper;
 import io.example.domain.model.User;
 import io.example.repository.UserRepo;
-import java.util.List;
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService {
 
   private final UserRepo userRepo;
   private final UserEditMapper userEditMapper;
@@ -60,15 +52,15 @@ public class UserService implements UserDetailsService {
   }
 
   @Transactional
-  public UserView upsert(CreateUserRequest request) {
+  public void upsert(CreateUserRequest request) {
     var optionalUser = userRepo.findByUsername(request.username());
 
     if (optionalUser.isEmpty()) {
-      return create(request);
+      create(request);
     } else {
       UpdateUserRequest updateUserRequest =
           new UpdateUserRequest(request.fullName(), request.authorities());
-      return update(optionalUser.get().getId(), updateUserRequest);
+      update(optionalUser.get().getId(), updateUserRequest);
     }
   }
 
@@ -82,19 +74,6 @@ public class UserService implements UserDetailsService {
     user = userRepo.save(user);
 
     return userViewMapper.toUserView(user);
-  }
-
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    return userRepo
-        .findByUsername(username)
-        .orElseThrow(
-            () ->
-                new UsernameNotFoundException(
-                    format("User with username - %s, not found", username)));
-  }
-
-  public boolean usernameExists(String username) {
-    return userRepo.findByUsername(username).isPresent();
   }
 
   public UserView getUser(ObjectId id) {

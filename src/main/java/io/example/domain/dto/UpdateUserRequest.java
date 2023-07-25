@@ -2,7 +2,7 @@ package io.example.domain.dto;
 
 import lombok.Builder;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import java.util.Set;
 
 public record UpdateUserRequest(

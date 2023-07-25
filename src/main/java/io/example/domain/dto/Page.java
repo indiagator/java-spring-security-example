@@ -1,7 +1,7 @@
 package io.example.domain.dto;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
 public record Page(
   @Min(value = 1, message = "Paging must start with page 1") long number,
