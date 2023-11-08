@@ -5,6 +5,8 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import io.example.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,6 +47,9 @@ import static java.lang.String.format;
 @Configuration
 public class SecurityConfig {
 
+  private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+
+
   private final UserRepo userRepo;
 
   @Value("${jwt.public.key}")
@@ -61,11 +66,14 @@ public class SecurityConfig {
 
   @Bean
   public UserDetailsService userDetailsService() {
-    return username -> userRepo
-      .findByUsername(username)
-      .orElseThrow(
-        () ->
-          new UsernameNotFoundException(format("User: %s, not found", username)));
+
+    logger.info("User Details Service Bean Created");
+
+    return username -> {
+      logger.info("Custom Authentication Invoked | User Details Fetched from the Database");
+      return userRepo.findByUsername(username).orElseThrow(() ->new UsernameNotFoundException(format("User: %s, not found", username)));
+    };
+
   }
 
   @Bean
@@ -100,6 +108,7 @@ public class SecurityConfig {
 
     // Set up oauth2 resource server
     http.httpBasic(Customizer.withDefaults());
+
     http.oauth2ResourceServer(configurer ->
       configurer.jwt(jwtConfigurer ->
         jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter())));

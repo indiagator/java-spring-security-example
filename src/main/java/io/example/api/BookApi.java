@@ -33,7 +33,7 @@ public class BookApi {
   private final BookService bookService;
   private final AuthorService authorService;
 
-  @RolesAllowed(Role.BOOK_ADMIN)
+  @RolesAllowed({Role.BOOK_ADMIN})
   @PostMapping
   public BookView create(@RequestBody @Valid EditBookRequest request) {
     return bookService.create(request);

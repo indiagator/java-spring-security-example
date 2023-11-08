@@ -40,37 +40,43 @@ public class AuthApi {
   private final UserService userService;
 
   @PostMapping("login")
-  public ResponseEntity<UserView> login(@RequestBody @Valid AuthRequest request) {
-    try {
-      var authentication =
-          authenticationManager.authenticate(
-              new UsernamePasswordAuthenticationToken(request.username(), request.password()));
+  public ResponseEntity<UserView> login(@RequestBody @Valid AuthRequest request)
+  {
+    try
+    {
+      // AUTHENTICATION
+      var authentication = authenticationManager. // AUTHENTICATION MANAGER WILL WORK AS CONFIGURED
+                authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.password()));
 
       var user = (User) authentication.getPrincipal();
-
       var now = Instant.now();
-      var expiry = 36000L;
+      var expiry = 3600L;
 
+      // EXTRACT ROLES
       var scope =
           authentication.getAuthorities().stream()
               .map(GrantedAuthority::getAuthority)
               .collect(joining(" "));
 
+      // CREATE JWT CLAIMS
       var claims =
           JwtClaimsSet.builder()
               .issuer("example.io")
               .issuedAt(now)
               .expiresAt(now.plusSeconds(expiry))
-              .subject(format("%s,%s", user.getId(), user.getUsername()))
+              .subject(format("%s,%s", user.getId(), user.getUsername())) //EMBEDDING THE USER_ID THAT WE CREATED
               .claim("roles", scope)
               .build();
 
+      // ENCODE JWT FROM CLAIMS
       var token = this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
       return ResponseEntity.ok()
           .header(HttpHeaders.AUTHORIZATION, token)
           .body(userViewMapper.toUserView(user));
-    } catch (BadCredentialsException ex) {
+    }
+    catch (BadCredentialsException ex)
+    {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
   }

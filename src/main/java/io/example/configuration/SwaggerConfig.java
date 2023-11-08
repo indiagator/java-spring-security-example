@@ -9,11 +9,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class SwaggerConfig {
+public class SwaggerConfig
+{
 
   @Bean
-  public OpenAPI apiInfo() {
+  public OpenAPI apiInfo()
+  {
     final var securitySchemeName = "bearerAuth";
+
     return new OpenAPI()
         .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
         .components(
@@ -31,4 +34,5 @@ public class SwaggerConfig {
                 .description("Rest Api for bookstore web application")
                 .version("1.0"));
   }
+
 }

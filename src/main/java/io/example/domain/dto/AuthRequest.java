@@ -7,7 +7,8 @@ public record AuthRequest(
   @NotNull @Email String username,
   @NotNull String password) {
 
-  public AuthRequest() {
+  public AuthRequest()
+  {
     this(null, null);
   }
 }
